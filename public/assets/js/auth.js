@@ -42,8 +42,12 @@ export async function renderAuthNav() {
   const user = await getCurrentUser();
 
   if (user) {
+    const avatarSrc = user.profile_picture || "./assets/images/logo2.png";
     authNav.innerHTML = `
-      <span class="auth-greeting">Hi, ${user.username}</span>
+      <a href="./profile.html" class="auth-profile-link">
+        <img src="${avatarSrc}" class="nav-avatar" alt="" />
+        <span class="auth-greeting">Hi, ${user.username}</span>
+      </a>
       <button type="button" class="btn-login" logout-btn>Logout</button>
     `;
     authNav.querySelector("[logout-btn]").addEventListener("click", logout);

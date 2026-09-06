@@ -11,9 +11,61 @@ function formatDate(iso) {
   });
 }
 
-function renderCommentItem(comment) {
+/*---------
+Swaps the comment's text for an inline textarea + Save/Cancel controls.
+onSave receives the new content and should return the updated comment
+object from the server (or null on failure).
+----------*/
+function startEdit(item, comment, onSave) {
+  const contentElem = item.querySelector(".comment-content");
+  const actionsElem = item.querySelector(".comment-actions");
+
+  const editWrapper = document.createElement("div");
+  editWrapper.classList.add("comment-edit-wrapper");
+  editWrapper.innerHTML = `
+    <textarea class="comment-input comment-edit-input"></textarea>
+    <div class="comment-edit-actions">
+      <button type="button" class="btn-login comment-submit" data-edit-save>Save</button>
+      <button type="button" class="comment-action-btn" data-edit-cancel>Cancel</button>
+    </div>
+    <p class="comment-error" data-edit-error></p>
+  `;
+  editWrapper.querySelector("textarea").value = comment.content;
+
+  contentElem.replaceWith(editWrapper);
+  actionsElem.style.display = "none";
+
+  function restore() {
+    editWrapper.replaceWith(contentElem);
+    actionsElem.style.display = "";
+  }
+
+  editWrapper.querySelector("[data-edit-cancel]").addEventListener("click", restore);
+
+  editWrapper
+    .querySelector("[data-edit-save]")
+    .addEventListener("click", async function () {
+      const textarea = editWrapper.querySelector("textarea");
+      const errorElem = editWrapper.querySelector("[data-edit-error]");
+      const newContent = textarea.value.trim();
+      if (!newContent) return;
+
+      const updated = await onSave(newContent);
+      if (updated) {
+        comment.content = updated.content;
+        contentElem.textContent = updated.content;
+        restore();
+      } else {
+        errorElem.textContent = "Could not save your changes. Please try again.";
+      }
+    });
+}
+
+function renderCommentItem(comment, currentUserId, { onDelete, onEdit }) {
   const item = document.createElement("div");
   item.classList.add("comment-item");
+
+  const isOwner = currentUserId != null && comment.user_id === currentUserId;
 
   item.innerHTML = `
     <div class="comment-header">
@@ -21,10 +73,30 @@ function renderCommentItem(comment) {
       <span class="comment-date">${formatDate(comment.created_at)}</span>
     </div>
     <p class="comment-content"></p>
+    ${
+      isOwner
+        ? `<div class="comment-actions">
+             <button type="button" class="comment-action-btn" data-action="edit">Edit</button>
+             <button type="button" class="comment-action-btn" data-action="delete">Delete</button>
+           </div>`
+        : ""
+    }
   `;
 
   // set as textContent (not innerHTML) so user comments can never inject markup
   item.querySelector(".comment-content").textContent = comment.content;
+
+  if (isOwner) {
+    item
+      .querySelector('[data-action="delete"]')
+      .addEventListener("click", () => onDelete(comment.id, item));
+
+    item
+      .querySelector('[data-action="edit"]')
+      .addEventListener("click", () =>
+        startEdit(item, comment, (newContent) => onEdit(comment.id, newContent))
+      );
+  }
 
   return item;
 }
@@ -55,6 +127,34 @@ export async function renderComments(movieId, movieTitle) {
   const listElem = section.querySelector("[comment-list]");
 
   const user = await getCurrentUser();
+  const currentUserId = user ? user.id : null;
+
+  async function handleDelete(commentId, itemElem) {
+    if (!confirm("Delete this comment?")) return;
+
+    const res = await apiFetch(`/api/comments/${commentId}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      itemElem.remove();
+      if (!listElem.querySelector(".comment-item")) {
+        listElem.innerHTML = `<p class="no-comments">No comments yet. Be the first to share your thoughts!</p>`;
+      }
+    }
+  }
+
+  async function handleEdit(commentId, content) {
+    const res = await apiFetch(`/api/comments/${commentId}`, {
+      method: "PUT",
+      body: JSON.stringify({ content }),
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+    return null;
+  }
 
   if (user) {
     formWrapper.innerHTML = `
@@ -93,7 +193,14 @@ export async function renderComments(movieId, movieTitle) {
 
         if (res.ok) {
           const comment = await res.json();
-          listElem.prepend(renderCommentItem(comment));
+          const noComments = listElem.querySelector(".no-comments");
+          if (noComments) noComments.remove();
+          listElem.prepend(
+            renderCommentItem(comment, currentUserId, {
+              onDelete: handleDelete,
+              onEdit: handleEdit,
+            })
+          );
           input.value = "";
           errorElem.textContent = "";
         } else {
@@ -116,7 +223,12 @@ export async function renderComments(movieId, movieTitle) {
       listElem.innerHTML = `<p class="no-comments">No comments yet. Be the first to share your thoughts!</p>`;
     } else {
       for (const comment of commentList) {
-        listElem.appendChild(renderCommentItem(comment));
+        listElem.appendChild(
+          renderCommentItem(comment, currentUserId, {
+            onDelete: handleDelete,
+            onEdit: handleEdit,
+          })
+        );
       }
     }
   }
