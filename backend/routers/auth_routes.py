@@ -72,4 +72,5 @@ def me(user: OptionalUserDep):
         "id": user.id,
         "username": user.username,
         "email": user.email,
+        "profile_picture": user.profile_picture,
     }

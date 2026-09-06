@@ -5,6 +5,7 @@ import { sidebar } from "./sidebar.js";
 import { createMovieCard } from "./movie-card.js";
 import { search } from "./search.js";
 import { renderComments } from "./comments.js";
+import { renderReactions } from "./reactions.js";
 
 const movieId = window.localStorage.getItem("movieId");
 const pageContent = document.querySelector("[page-content]");
@@ -165,6 +166,7 @@ fetchDataFromServer(
 
     pageContent.appendChild(movieDetail);
 
+    renderReactions(movieId);
     renderComments(movieId, title);
 
     fetchDataFromServer(
