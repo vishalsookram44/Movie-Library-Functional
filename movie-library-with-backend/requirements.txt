@@ -1,7 +1,0 @@
-fastapi
-sqlmodel
-pydantic-settings
-pwdlib[argon2]
-pyjwt
-email-validator
-psycopg[binary]
