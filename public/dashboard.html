@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — FreshCheck</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>try{if(localStorage.getItem("fcDark")==="1")document.documentElement.classList.add("dark")}catch(e){}</script>
+<style>
+:root{--bg:#f2f5de;--card:rgba(242,245,222,.92);--card2:rgba(255,255,255,.75);--line:#d3deb4;--tx:#2b4630;--mut:#55694f;--mint:#4f7a46;--deep:#4f7a46;--warn:#d9481f;--ok:#2f7d3a;--hdr:rgba(242,245,222,.92);--chartbg:rgba(255,255,255,.6);--band:rgba(79,122,70,.16);--trace:#2b4630;--bannerbg:#e7eed0;--bsafe:#dcedc0;--balert:#fbe0d6;--boff:#e3e6d8;--boffx:#6b7466;--back:#f6ecc0;--backx:#8a6d00;--warnbg:#fdeee8;--warnline:#e9b4a2;--prebg:#e7eed0;--overlay:rgba(43,70,48,.5);--toastbg:#2b4630;--toasttx:#f4f9e8;--onmint:#fff}
+html.dark{--bg:#111611;--card:#1a221b;--card2:#222d23;--line:#2c3a2d;--tx:#eef5e0;--mut:#9db394;--mint:#cfe88f;--deep:#4f7a46;--warn:#ff7a55;--ok:#8fdc8f;--hdr:rgba(17,22,17,.94);--chartbg:#141b15;--band:rgba(143,220,143,.14);--trace:#cfe88f;--bannerbg:#243522;--bsafe:#17381b;--balert:#4a1f14;--boff:#333;--boffx:#aaa;--back:#3a3418;--backx:#e8d36a;--warnbg:#2a1a15;--warnline:#6b2e1d;--prebg:#0d120d;--overlay:rgba(0,0,0,.62);--toastbg:#cfe88f;--toasttx:#111;--onmint:#111}
+#bg{position:fixed;inset:0;z-index:-1;background:var(--bg)}
+.bgl{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;opacity:0;transition:opacity .9s ease}
+.bgl.on{opacity:1}.bgl[data-k=a]{background-image:url(/img/bg-hero.jpg)}.bgl[data-k=b]{background-image:url(/img/bg-problem.jpg)}
+html.dark #bg{display:none}
+.card,.st{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Bricolage Grotesque',system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+body[hidden]{display:none}
+.mono{font-family:'JetBrains Mono',monospace}
+button{font:inherit;cursor:pointer;color:inherit}
+header{position:sticky;top:0;z-index:10;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .in{max-width:1200px;margin:auto;padding:0 18px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.2rem;color:var(--tx);text-decoration:none}
+.logo svg{width:30px;height:30px}
+.who{display:flex;align-items:center;gap:14px;font-size:.88rem;color:var(--mut)}
+.bell{position:relative;font-size:1.15rem;background:none;border:0;cursor:pointer;padding:4px 8px}#detail{scroll-margin-top:76px}
+.bell i{position:absolute;top:-6px;right:-9px;background:var(--warn);color:#fff;font:600 .65rem 'JetBrains Mono',monospace;border-radius:99px;padding:0 5px;font-style:normal}
+.gb{background:transparent;border:1px solid var(--line);padding:6px 14px;border-radius:99px}
+.gb:hover{background:var(--card2)}
+main{max-width:1200px;margin:auto;padding:18px 18px 60px}
+.banner{font-size:.78rem;color:var(--mint);background:var(--bannerbg);border:1px solid var(--line);border-radius:10px;padding:7px 12px;display:inline-block}
+h1{font-size:1.7rem;letter-spacing:-.03em;margin:10px 0 2px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:16px 0}
+.st{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.st small{color:var(--mut);font-size:.78rem;display:block}
+.st b{display:block;font-size:1.8rem;line-height:1.2;font-weight:600}
+.st span{font-size:.75rem;color:var(--mut)}
+.st.al b{color:var(--warn)}
+.cols{display:grid;grid-template-columns:370px 1fr;gap:16px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h3{font-size:1rem;margin-bottom:10px}
+#q{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:10px 16px;color:var(--tx);font:inherit;margin-bottom:8px}
+#q:focus{outline:2px solid var(--deep)}
+.tabs{display:flex;gap:6px;margin-bottom:6px}
+.tabs button,.rng button{background:transparent;border:1px solid var(--line);border-radius:8px;padding:4px 12px;font-size:.82rem}
+.tabs button.on,.rng button.on{background:var(--deep);border-color:var(--deep);color:#fff}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 8px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:8px}
+.row:hover,.row.sel{background:var(--card2)}
+.row b{font-size:.95rem;display:block}
+.row small{color:var(--mut);font-size:.78rem}
+.badge{font:600 .68rem 'JetBrains Mono',monospace;padding:2px 8px;border-radius:6px;margin-left:6px}
+.b-safe{background:var(--bsafe);color:var(--ok)}.b-alert{background:var(--balert);color:var(--warn)}.b-offline{background:var(--boff);color:var(--boffx)}
+.temp{border:1.5px solid var(--line);border-radius:14px;padding:14px 18px;display:inline-block;min-width:260px}
+.temp small{color:var(--mut);font-size:.78rem;display:block}
+.temp b{font-size:2.3rem;font-weight:600}
+.temp.bad{border-color:var(--warn)}.temp.bad b{color:var(--warn)}
+.dhead{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+.mm{display:flex;gap:18px;font-size:.82rem;color:var(--mut)}
+.mm b{display:block;color:var(--tx);font-size:1.05rem}
+.chart{margin-top:14px;background:var(--chartbg);border-radius:12px;padding:8px;height:210px}
+.chart svg{width:100%;height:100%;display:block}
+.axis{display:flex;justify-content:space-between;font-size:.72rem;color:var(--mut);margin:4px 2px 10px}
+.rng{display:flex;gap:8px}
+.msg{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:.92rem}
+.msg.w{border-color:var(--warnline);background:var(--warnbg)}
+.acts{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+.callb{background:transparent;border:1.5px solid var(--mint);color:var(--mint);border-radius:10px;padding:8px 16px}
+.callb:hover{background:var(--mint);color:var(--onmint)}
+.rec{font-style:italic;color:var(--mut);font-size:.88rem;margin-top:10px}
+.ana{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:16px;margin-top:16px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:130px}
+.bars div{flex:1;text-align:center;font-size:.7rem;color:var(--mut);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.bars i{display:block;background:var(--deep);border-radius:5px 5px 0 0;min-height:3px}
+.bars i.t{background:var(--warn)}
+.cp{margin-bottom:9px;font-size:.82rem}
+.cp div{height:7px;background:var(--card2);border-radius:9px;overflow:hidden;margin-top:3px}
+.cp i{display:block;height:100%;background:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{text-align:left;color:var(--mut);font-weight:400;padding:4px 6px}
+td{padding:7px 6px;border-top:1px solid var(--line)}
+.tw{overflow-x:auto}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--toastbg);color:var(--toasttx);padding:10px 18px;border-radius:99px;font-weight:600;display:none;z-index:20}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.lc{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}.lc.bad{border-color:var(--warn)}
+.lc b{font-size:1.7rem;font-weight:600}.lc small{color:var(--mut);font-size:.75rem;display:block}.lc svg{width:100%;height:38px;display:block;margin-top:6px}
+pre{background:var(--prebg);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:.78rem;margin:8px 0;white-space:pre-wrap;word-break:break-all}
+.lc{position:relative;scroll-margin-top:76px}.lc .x{position:absolute;top:8px;right:8px;background:none;border:0;color:var(--mut);cursor:pointer;font-size:1rem}.lc .x:hover{color:var(--warn)}
+#sim,#rmod,#xmod{display:none;position:fixed;inset:0;z-index:30;background:var(--overlay);align-items:center;justify-content:center;padding:20px}
+#sim.on,#rmod.on,#xmod.on{display:flex}
+#sim .box,#rmod .box,#xmod .box{max-height:90vh;overflow-y:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;width:100%;max-width:400px;display:grid;gap:12px}
+#sim label,#rmod label{font-size:.8rem;color:var(--mut);display:block;margin-bottom:3px}
+#sim input,#rmod input{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--tx);font:inherit}
+#sim input:read-only{opacity:.6}
+.cmdrow{display:flex;gap:8px;align-items:stretch}.cmdrow pre{flex:1;margin:0;font-size:.74rem}
+.xrow{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card2);border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:.9rem}
+.xrow input{width:auto;accent-color:var(--deep)}
+.set{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.set label{font-size:.75rem;color:var(--mut);display:block}
+.set input{width:96px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:7px 10px;color:var(--tx);font:inherit}
+.pb{background:var(--deep);color:#fff;border:0;border-radius:8px;padding:8px 16px}.pb:hover{background:#5d8d52}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.b-ack{background:var(--back);color:var(--backx)}
+@media(max-width:960px){.who{gap:8px}.who .gb{padding:5px 9px;font-size:.8rem}.stats{grid-template-columns:1fr 1fr}.cols,.ana{grid-template-columns:1fr}.who span{display:none}}
+</style>
+</head>
+<body hidden>
+<div id="bg" aria-hidden="true"><div class="bgl on" data-k="a"></div><div class="bgl" data-k="b"></div></div>
+<header><div class="in">
+  <a class="logo" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4f7a46"/><path d="M18 34l10 10 18-22" fill="none" stroke="#cfe88f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>FreshCheck</a>
+  <div class="who"><span id="hi"></span><button class="bell" id="bell" title="Go to active alert" aria-label="Go to active alert">🔔<i id="bellN">0</i></button><a class="gb" id="adminLink" href="/admin" style="display:none;text-decoration:none">Admin</a><button class="gb" id="theme" aria-label="Toggle dark mode">🌙 <span>Dark</span></button><button class="gb" id="out">Log out</button></div>
+</div></header>
+
+<main>
+  <div class="tools" style="margin:0"><span class="banner mono">DEMO DASHBOARD · SIMULATED DATA</span><button class="gb" id="csvAll">⬇ Export report (CSV)</button></div>
+  <h1 id="biz"></h1>
+  <p style="color:var(--mut);font-size:.9rem">Live view of every sensor, delivery vehicle and alert across your operation.</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="card" id="live" style="margin-bottom:16px">
+    <div class="dhead"><h3>Live sensors <span class="badge b-safe mono">REAL READINGS</span></h3><span style="color:var(--mut);font-size:.8rem">Refreshes every 4 s</span></div>
+    <div class="tools" style="margin:0 0 12px"><button class="pb" id="addSensor" style="padding:4px 14px;font-size:.85rem">＋ Add sensor</button><label style="font-size:.85rem;color:var(--mut)"><input type="checkbox" id="mailOn"> Email me when a live sensor goes out of range</label><!-- Test email button is hidden for now. Remove the "hidden" attribute to show it again. -->
+<button class="gb" id="mailTest" hidden style="padding:3px 12px;font-size:.8rem">Send test email</button><button class="gb" id="liveClear" style="padding:3px 12px;font-size:.8rem;display:none">Remove all live sensors</button><span id="mailNote" style="font-size:.78rem;color:var(--warn)"></span></div>
+    <div class="lgrid" id="liveList"></div>
+    <!-- Developer commands are hidden for now. Remove the "hidden" attribute to show them again. -->
+    <details id="liveDet" hidden style="margin-top:12px"><summary style="cursor:pointer;color:var(--mint)">For developers: send readings from a terminal or device</summary>
+      <p class="rec">Pick your system, run it in a terminal, then change the temperature and run it again to watch the card update.</p>
+      <div class="rng"><button data-os="win">Windows PowerShell</button><button data-os="nix">macOS / Linux</button></div>
+      <pre id="cmd" class="mono">Loading…</pre><button class="gb" id="copyCmd">Copy command</button>
+    </details>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h3>Sensors</h3>
+      <input id="q" placeholder="🔍  Search sensors" aria-label="Search sensors">
+      <div class="tabs" id="tabs"><button data-f="" class="on">All</button><button data-f="alert">Alerts</button><button data-f="v">Vehicles</button></div>
+      <div id="list"></div>
+    </div>
+    <div class="card" id="detail"></div>
+  </div>
+
+  <div class="ana">
+    <div class="card"><h3>Alerts per day · last 7 days</h3><div class="bars" id="alerts7"></div></div>
+    <div class="card"><h3>Compliance by unit · 7 days</h3><div id="comp"></div></div>
+    <div class="card"><h3>Recent alert history</h3><div class="tw"><table id="hist"></table></div></div>
+  </div>
+</main>
+<div id="sim" role="dialog" aria-modal="true" aria-label="Send a simulated reading"><div class="box">
+  <h3 id="simTitle" style="font-size:1.2rem">Add a sensor</h3>
+  <div class="rng" id="addMode"><button data-m="sim" class="on">Simulated</button><button data-m="real">Real sensor (phone)</button></div>
+  <div id="simPane" style="display:contents">
+  <p style="color:var(--mut);font-size:.88rem">Pretend a sensor just reported a temperature.</p>
+  <div><label for="simName">Sensor name</label><input id="simName" maxlength="60" value="Kitchen Fridge" autocomplete="off"></div>
+  <div><label for="simTemp">Temperature (°C)</label><input id="simTemp" type="number" step="0.1" value="3.4"></div>
+  <p class="rec" id="simHint" style="margin:0"></p>
+  <div id="simErr" role="alert" style="color:var(--warn);font-size:.85rem;display:none"></div>
+  </div>
+  <div id="realPane" style="display:none;gap:12px">
+    <p style="color:var(--mut);font-size:.88rem">Use your Android phone's battery temperature, sent by the free Sensor Logger app. This is the phone's own temperature, not the room's.</p>
+    <div><label for="rwName">Sensor name</label><input id="rwName" maxlength="60" value="My Phone" autocomplete="off"></div>
+    <div style="display:flex;gap:10px"><div style="flex:1"><label for="rwLo">Min safe (°C)</label><input id="rwLo" type="number" step="0.1" value="20"></div><div style="flex:1"><label for="rwHi">Max safe (°C)</label><input id="rwHi" type="number" step="0.1" value="40"></div></div>
+    <div id="rwErr" role="alert" style="color:var(--warn);font-size:.85rem;display:none"></div>
+    <button class="pb" id="rwCreate">Show setup details</button>
+    <div id="rwSteps" style="display:none;gap:10px">
+      <p class="rec" style="margin:0"><b>1.</b> In Sensor Logger open Settings, then Data Streaming, and turn on Enable HTTP Push.</p>
+      <p class="rec" style="margin:0"><b>2.</b> Paste this as the Push URL:</p>
+      <div class="cmdrow"><pre id="rwUrl" class="mono"></pre><button class="gb" data-copy="rwUrl">Copy</button></div>
+      <p class="rec" style="margin:0"><b>3.</b> Paste this as the Auth Header (it already includes "Bearer"):</p>
+      <div class="cmdrow"><pre id="rwAuth" class="mono"></pre><button class="gb" data-copy="rwAuth">Copy</button></div>
+      <p class="rec" style="margin:0"><b>4.</b> Turn on the Battery Temperature sensor and set a batch period of about 10 to 30 seconds. Tap "Tap to Test Pushing", then start a recording and keep it running.</p>
+      <div id="rwStatus" role="status" style="font-size:.88rem"></div>
+    </div>
+  </div>
+  <div class="tools" style="margin:0;justify-content:flex-end"><button class="gb" id="simCancel">Cancel</button><button class="pb" id="simGo">Finish</button></div>
+</div></div>
+<div id="rmod" role="dialog" aria-modal="true" aria-label="Edit safe range"><div class="box">
+  <h3 id="rTitle" style="font-size:1.2rem">Safe range</h3>
+  <p style="color:var(--mut);font-size:.88rem">A reading outside this range raises an alert (and an email, if enabled).</p>
+  <div style="display:flex;gap:10px"><div style="flex:1"><label for="rmLo">Min (°C)</label><input id="rmLo" type="number" step="0.1"></div><div style="flex:1"><label for="rmHi">Max (°C)</label><input id="rmHi" type="number" step="0.1"></div></div>
+  <p class="rec" style="margin:0">Examples: fridge 0 to 5, freezer -21 to -18, phone battery 20 to 40.</p>
+  <div id="rmErr" role="alert" style="color:var(--warn);font-size:.85rem;display:none"></div>
+  <div class="tools" style="margin:0;justify-content:flex-end"><button class="gb" id="rmReset">Reset to default</button><button class="gb" id="rmCancel">Cancel</button><button class="pb" id="rmSave">Save range</button></div>
+</div></div>
+<div id="xmod" role="dialog" aria-modal="true" aria-label="Export report"><div class="box">
+  <h3 style="font-size:1.2rem">Export report</h3>
+  <p style="color:var(--mut);font-size:.88rem">Choose the time range and which sensors to include.</p>
+  <div class="rng" id="xRng"><button data-xw="36">6h</button><button data-xw="144">24h</button><button data-xw="1008" class="on">7d</button></div>
+  <div class="tools" style="margin:0"><button class="gb" id="xAll" style="padding:3px 12px;font-size:.8rem">Select all</button><button class="gb" id="xNone" style="padding:3px 12px;font-size:.8rem">Clear</button></div>
+  <div id="xList" style="max-height:260px;overflow-y:auto;display:grid;gap:6px"></div>
+  <div class="tools" style="margin:0;justify-content:flex-end"><button class="gb" id="xCancel">Cancel</button><button class="pb" id="xGo">Download CSV</button></div>
+</div></div>
+<div id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const R=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}; // seeded PRNG
+const POOL=[
+ {n:'Kitchen Walk-in Cooler',lo:1.7,hi:3.3,k:'f'},{n:'Freezer A',lo:-21,hi:-18,k:'f'},
+ {n:'Delivery Van 1',lo:0,hi:8,k:'v',d:'John Driver',r:'St. Juan'},{n:'Prep Fridge',lo:0,hi:5,k:'f'},
+ {n:'Dessert Display',lo:1,hi:5,k:'f'},{n:'Delivery Van 2',lo:0,hi:8,k:'v',d:'Anika Ramdial',r:'Chaguanas'},
+ {n:'Dairy Cold Room',lo:1,hi:4,k:'f'},{n:'Freezer B',lo:-21,hi:-18,k:'f'}];
+const SETS={'Restaurant':[0,1,2,3,4,6],'Supermarket':[0,1,4,6,7,3],'Caterer':[0,1,2,3,5],'Food distributor':[2,5,0,1,6,7],'Hotel':[0,1,2,3,4,6,7],'Grocery delivery':[2,5,0,3,6]};
+const N=1008,STEP=10,DAY=144,NOW=Date.now();
+let U,UNITS=[],SEL=0,WIN=DAY,FILT='',QRY='',ST={ranges:{},acks:{},emailAlerts:true,liveRanges:{},pausedFeeds:{}},LIVE={},LASTSN={};
+const save=()=>fetch('/api/state',{method:'PUT',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:ST})}).catch(()=>{});
+const inr=(u,v)=>v>=u.lo&&v<=u.hi, cur=u=>u.h[u.h.length-1], mid=u=>(u.lo+u.hi)/2;
+const stat=u=>u.off?'offline':inr(u,cur(u))?'safe':'alert';
+const rng=u=>u.lo+' to '+u.hi+'°C';
+const ts=t=>new Date(t).toLocaleString([], {weekday:'short',hour:'2-digit',minute:'2-digit'});
+const toast=m=>{const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2500)};
+
+function build(){
+  const rnd=R(U.id*7919+13);
+  UNITS=(SETS[U.type]||[0,1,2,3,4,5,6,7]).map((i,k)=>{
+    const p=POOL[i],sp=p.hi-p.lo,amp=Math.min(sp*.14,.5),h=[];
+    for(let j=0;j<N;j++)h.push(mid(p)+Math.sin(j/11+i)*amp+(rnd()-.5)*amp);
+    for(let e=0,n=2+Math.floor(rnd()*2);e<n;e++){const s=30+Math.floor(rnd()*(N-200)),len=3+Math.floor(rnd()*4);for(let j=0;j<len;j++)h[s+j]=p.hi+sp*.15+rnd()*sp*.25}
+    return{...p,key:p.n,dlo:p.lo,dhi:p.hi,h,t:h.map((_,j)=>NOW-(N-1-j)*STEP*6e4),off:false}});
+  const a=UNITS.find(u=>u.k==='v')||UNITS[0];
+  for(let j=0;j<14;j++)a.h[N-14+j]=a.hi-.6+j/13*1.1;   // the unit currently in alert
+  a.live=true; UNITS[UNITS.length-1].off=true;          // one sensor offline
+  SEL=UNITS.indexOf(a);
+}
+function events(u){ // alert episodes, time-based so simulated and live sensors work the same way
+  const ev=[],n=u.h.length;let st=null;
+  u.h.forEach((v,j)=>{const bad=!inr(u,v);if(bad&&st===null)st=j;
+    if((!bad||j===n-1)&&st!==null){
+      const seg=u.h.slice(st,bad?n:j),ongoing=bad&&j===n-1,active=ongoing&&!u.off;
+      const t1=ongoing?(u.real?(u.off?u.t[n-1]:Date.now()):u.t[n-1]+STEP*6e4):u.t[j];
+      ev.push({u,t0:u.t[st],ms:Math.max(0,t1-u.t[st]),peak:seg.reduce((x,y)=>Math.abs(y-mid(u))>Math.abs(x-mid(u))?y:x),active});st=null}});
+  return ev;
+}
+const shown=u=>!(u.off&&!u.real);
+const allEv=()=>UNITS.filter(shown).flatMap(events);
+function streakMs(u){let j=u.h.length-1;while(j>=0&&!inr(u,u.h[j]))j--;const st=j+1;return u.real?Math.max(0,Date.now()-u.t[st]):(u.t[u.t.length-1]-u.t[st])+STEP*6e4}
+
+const H={}; // live sensor history: name -> {t:[ms], h:[°C]}
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const human=ms=>{const m=ms/6e4;return m<1?'less than a minute':m<60?Math.round(m)+' min':m<1440?+(m/60).toFixed(1)+' h':Math.round(m/1440)+' days'};
+const endT=u=>u.real?Date.now():u.t[u.t.length-1];
+const from=(u,win)=>{const c=endT(u)-win*STEP*6e4,i=u.t.findIndex(x=>x>=c);return i<0?u.h.length-1:i};
+const comp=u=>u.h.filter(v=>inr(u,v)).length/u.h.length;
+
+function stats(){
+  const alAll=UNITS.filter(u=>stat(u)==='alert').map(u=>u.key),al=alAll.filter(k=>!ST.acks[k]).length,off=UNITS.filter(u=>u.off).length,on=UNITS.length-off;
+  const vans=UNITS.filter(u=>u.k==='v'&&!u.off),vbad=vans.filter(u=>stat(u)==='alert').length;
+  const live=UNITS.filter(u=>!u.off),tot=live.length?live.reduce((s,u)=>s+comp(u),0)/live.length*100:null;
+  const saved=allEv().filter(e=>!e.active).length*1850;
+  const c=[['Active alerts',al,al?'Needs attention':alAll.length?alAll.length+' acknowledged':'All clear','al'],['Online units',on+'/'+UNITS.length,off+' offline',''],
+    ['In transit',vans.length,vbad?vbad+' need attention':'All safe',''],['Compliance · 7d',tot===null?'--':tot.toFixed(1)+'%','Time in safe range',''],
+    ['Est. stock saved','TT$'+saved.toLocaleString(),'Illustrative, past alerts','']];
+  $('#stats').innerHTML=c.map(x=>`<div class="st ${x[3]&&al?x[3]:''}"><small>${x[0]}</small><b class="mono">${x[1]}</b><span>${x[2]}</span></div>`).join('');
+  $('#bellN').textContent=al;$('#bellN').style.display=al?'':'none';
+}
+function list(){
+  const q=QRY.toLowerCase();
+  const rows=UNITS.map((u,i)=>[u,i]).filter(([u])=>u.n.toLowerCase().includes(q)&&(!FILT||(FILT==='v'?u.k==='v':stat(u)==='alert'))).sort((a,b)=>(b[0].real?1:0)-(a[0].real?1:0)); // live sensors first
+  $('#list').innerHTML=rows.map(([u,i])=>{const s=stat(u),ak=s==='alert'&&ST.acks[u.key];return `<div class="row ${i===SEL?'sel':''}" data-i="${i}"><div><b>${esc(u.n)}${u.real?' <span class="badge b-safe">LIVE</span>':''} <small>(Safe: ${rng(u)})</small></b><small>Current: ${u.off&&!u.real?'--':cur(u).toFixed(1)+'°C'}</small><span class="badge b-${ak?'ack':s}">${s==='safe'?'Safe':s==='alert'?(ak?'Acknowledged':'Alert'):'Offline'}</span></div><span style="color:var(--mut)">›</span></div>`}).join('')||'<p style="color:var(--mut);font-size:.9rem;padding:10px">No sensors match.</p>';
+}
+function effWin(u){ // live sensors with little data: zoom the chart in on the data they have
+  const win=WIN*STEP*6e4;if(!u.real)return win;
+  return Math.min(win,Math.max((Date.now()-u.t[from(u,WIN)])*1.15,3*6e4));
+}
+function chart(u){
+  const win=effWin(u),te=endT(u),i0=from(u,WIN),p=u.h.slice(i0),q=u.t.slice(i0);
+  const k=Math.max(1,Math.floor(p.length/180)),idx=p.map((_,i)=>i).filter(i=>i%k===0||i===p.length-1);
+  const mn=Math.min(u.lo,...p)-.8,mx=Math.max(u.hi,...p)+.8,W=600,H2=200,Y=v=>H2-(v-mn)/(mx-mn)*H2,X=t=>Math.max(0,Math.min(W,(t-(te-win))/win*W));
+  const last=p[p.length-1],bad=!inr(u,last)&&!u.off,col=bad?'var(--warn)':'var(--trace)';
+  const pts=idx.map(i=>X(q[i]).toFixed(1)+','+Y(p[i]).toFixed(1)).join(' ');
+  const dot=p.length<=12?idx.map(i=>`<circle cx="${X(q[i]).toFixed(1)}" cy="${Y(p[i]).toFixed(1)}" r="3.5" style="fill:${col}"/>`).join(''):'';
+  return `<svg viewBox="0 0 ${W} ${H2}" preserveAspectRatio="none"><rect x="0" y="${Y(u.hi)}" width="${W}" height="${Y(u.lo)-Y(u.hi)}" style="fill:var(--band)"/><polyline points="${pts}" fill="none" style="stroke:${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>${dot}</svg>`;
+}
+function detail(){
+  const u=UNITS[SEL],c=cur(u),s=stat(u),w=u.h.slice(from(u,WIN)),bad=s==='alert',nm=esc(u.n);
+  const mn=Math.min(...w),mx=Math.max(...w),av=w.reduce((a,b)=>a+b,0)/w.length;
+  const lbl={[DAY/4]:'6 hours',[DAY]:'24 hours',[DAY*7]:'7 days'}[WIN];
+  const eff=effWin(u),effLbl=eff<WIN*STEP*6e4?human(eff):lbl;
+  const kind=u.real?'Live sensor':u.k==='v'?'Delivery vehicle':'Storage unit';
+  let msg;
+  if(u.off)msg=`<div class="msg w"><b>${nm} is offline</b><br>No readings received for ${u.real?human(Date.now()-u.t[u.t.length-1]):'2 hours'}.</div><p class="rec">Recommended actions: check sensor battery, power and Wi-Fi signal.</p>`;
+  else if(bad){
+    msg=`<div class="msg w"><b>${nm} is too ${c>u.hi?'warm':'cold'}</b><br>Outside ${rng(u)} for ${human(streakMs(u))}. ${u.k==='v'?'Dairy load at risk.':'Stock at risk.'}</div>
+    <div class="acts" style="margin-top:10px">${u.k==='v'?`<div class="msg" style="margin:0">Driver: ${u.d}<br>Route: ${u.r}</div><button class="callb" id="call">📞 Call Driver</button>`:''}</div>
+    <p class="rec">Recommended actions: ${u.k==='v'?'check door seal, reroute to nearest depot.':'check door seal and compressor, move stock to a working unit.'}</p>`;}
+  else msg=`<div class="msg">✓ All readings within the safe range (${rng(u)}).</div>`;
+  if(bad)msg+=ST.acks[u.key]?`<div class="msg" style="border-color:#6b6320;margin-top:10px">✓ Acknowledged: marked as handled. <button class="gb" id="unack" style="margin-left:8px;padding:2px 10px">Undo</button></div>`:`<div class="tools"><button class="pb" id="ack">✓ Acknowledge alert</button></div>`;
+  $('#detail').innerHTML=`<div class="dhead"><div><small style="color:var(--mut)">${kind}</small><h3 style="font-size:1.3rem;margin:0 0 8px">${nm}</h3>
+    <div class="temp ${bad?'bad':''}"><small>${u.off&&u.real?'Last reading':'Temperature'}</small><b class="mono">${u.off&&!u.real?'--':c.toFixed(1)+'°C'}</b>${bad?' <span class="mono" style="color:var(--warn)">'+(c>u.hi?'Too High':'Too Low')+'</span>':''}<small>Safe temperature: ${rng(u)}</small></div></div>
+    <div class="mm"><div>Min<b class="mono">${mn.toFixed(1)}°</b></div><div>Avg<b class="mono">${av.toFixed(1)}°</b></div><div>Max<b class="mono">${mx.toFixed(1)}°</b></div></div></div>
+    <div class="chart">${chart(u)}</div>
+    <div class="axis mono"><span>${effLbl} ago</span><span>Safe range shaded green</span><span>Now</span></div>
+    <div class="rng">${[[DAY/4,'6h'],[DAY,'24h'],[DAY*7,'7d']].map(([v,l])=>`<button data-w="${v}" class="${v===WIN?'on':''}">${l}</button>`).join('')}<button class="gb" id="csv1" style="margin-left:auto">⬇ Export CSV</button></div>
+    <h3 style="margin-top:16px">${bad||u.off?'Alert!':'Status'}</h3>${msg}
+    <h3 style="margin-top:20px">Alert settings</h3>
+    <div class="set"><div><label for="rLo">Min safe (°C)</label><input type="number" step="0.1" id="rLo" value="${u.lo}"></div><div><label for="rHi">Max safe (°C)</label><input type="number" step="0.1" id="rHi" value="${u.hi}"></div><button class="pb" id="saveR">Save range</button><button class="gb" id="resetR">Reset to default</button></div>
+    <p class="rec" id="rmsg">An alert triggers when a reading leaves this range. Default: ${u.dlo} to ${u.dhi}°C.</p>`;
+  const cb=$('#call');if(cb)cb.onclick=()=>toast('Calling '+u.d+'… (demo)');
+}
+function analytics(){
+  const ev=allEv(),days=Array(7).fill(0);ev.forEach(e=>days[Math.min(6,Math.floor((Date.now()-e.t0)/864e5))]++);
+  const d=days.reverse(),max=Math.max(1,...d);
+  $('#alerts7').innerHTML=d.map((n,i)=>`<div><span>${n}</span><i class="${i===6&&n?'t':''}" style="height:${n/max*100}%"></i>${new Date(Date.now()-(6-i)*864e5).toLocaleDateString([], {weekday:'short'})}</div>`).join('');
+  $('#comp').innerHTML=UNITS.filter(shown).map(u=>{const p=comp(u)*100;return `<div class="cp">${esc(u.n)} <b class="mono" style="float:right">${p.toFixed(1)}%</b><div><i style="width:${p}%"></i></div></div>`}).join('');
+  const rows=ev.sort((a,b)=>b.t0-a.t0).slice(0,6);
+  $('#hist').innerHTML='<tr><th>Unit</th><th>When</th><th>Peak</th><th>Length</th><th></th></tr>'+(rows.map(e=>{const ak=e.active&&ST.acks[e.u.key];return `<tr><td>${esc(e.u.n)}</td><td>${ts(e.t0)}</td><td class="mono">${e.peak.toFixed(1)}°C</td><td>${e.ms<6e4?'&lt;1 min':Math.round(e.ms/6e4)+' min'}</td><td><span class="badge ${e.active?(ak?'b-ack':'b-alert'):'b-safe'}">${e.active?(ak?'Acknowledged':'Active'):'Resolved'}</span></td></tr>`}).join('')||'<tr><td colspan="5" style="color:var(--mut)">No alerts in the last 7 days.</td></tr>');
+}
+function tick(){
+  UNITS.forEach(u=>{
+    if(!u.real&&!u.off){const a=(u.dhi-u.dlo)*.04; // simulated drift only (real sensors use real readings)
+      u.h[N-1]=u.live?Math.min(u.dhi+1.5,u.h[N-1]+.02+(Math.random()-.4)*.03):Math.max(u.dlo+.1,Math.min(u.dhi-.1,u.h[N-1]+(Math.random()-.5)*a))}
+    if(ST.acks[u.key]&&stat(u)!=='alert'){delete ST.acks[u.key];save()} // alert cleared itself
+  });
+  stats();list();if(!document.activeElement.closest('#detail input'))detail(); // don't wipe what the user is typing
+}
+function csv(units,win,name){
+  const rows=['timestamp,sensor,temperature_c,safe_min_c,safe_max_c,status'];
+  units.forEach(u=>{const nm='"'+(/^[=+\-@]/.test(u.n)?"'":'')+u.n.replace(/"/g,'""')+'"';
+    for(let i=from(u,win);i<u.h.length;i++)rows.push([new Date(u.t[i]).toISOString(),nm,u.h[i].toFixed(2),u.lo,u.hi,inr(u,u.h[i])?'OK':'OUT OF RANGE'].join(','))});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
+  a.download='freshcheck-'+name+'.csv';document.body.append(a);a.click();a.remove();toast('CSV downloaded');
+}
+function render(){stats();list();detail();analytics()}
+function refreshAll(){stats();list();if(!document.activeElement.closest('#detail input'))detail();analytics()}
+function syncReal(){ // turn live sensor history into dashboard units (list, details, analytics)
+  for(let i=UNITS.length-1;i>=0;i--)if(UNITS[i].real&&!H[UNITS[i].n])UNITS.splice(i,1);
+  Object.keys(H).forEach(n=>{
+    let u=UNITS.find(x=>x.real&&x.n===n);const r=rangeOf(n);
+    if(!u){u={n,key:'live:'+n,k:'f',real:true,dlo:LIVE_LO,dhi:LIVE_HI};UNITS.push(u)}
+    u.lo=r[0];u.hi=r[1];u.h=H[n].h;u.t=H[n].t;u.off=Date.now()-u.t[u.t.length-1]>120000;
+  });
+  if(SEL>=UNITS.length)SEL=UNITS.length-1;
+}
+async function loadHistory(){ // past 7 days, once at load
+  const r=await fetch('/api/readings/history',{credentials:'include'}).then(r=>r.ok?r.json():null).catch(()=>null);
+  if(!r)return;
+  Object.entries(r.sensors).forEach(([n,p])=>{
+    const t=p.map(x=>x[0]),h=p.map(x=>x[1]),cur=H[n],lt=t.length?t[t.length-1]:0;
+    if(cur)cur.t.forEach((x,i)=>{if(x>lt){t.push(x);h.push(cur.h[i])}}); // keep anything newer a poll already added
+    H[n]={t,h};
+  });
+  liveRender();
+}
+
+$('#list').addEventListener('click',e=>{const r=e.target.closest('.row');if(!r)return;SEL=+r.dataset.i;list();detail();if(innerWidth<960)$('#detail').scrollIntoView({behavior:'smooth'})});
+$('#detail').addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;const u=UNITS[SEL];
+  if(t.dataset.w){WIN=+t.dataset.w;detail()}
+  else if(t.id==='ack'){ST.acks[u.key]=true;save();toast('Alert acknowledged');render()}
+  else if(t.id==='unack'){delete ST.acks[u.key];save();render()}
+  else if(t.id==='csv1')csv([u],WIN,u.n.replace(/\W+/g,'-').toLowerCase()+'-'+{[DAY/4]:'6h',[DAY]:'24h',[DAY*7]:'7d'}[WIN]);
+  else if(t.id==='saveR'){
+    const lo=parseFloat($('#rLo').value),hi=parseFloat($('#rHi').value);
+    if(!isFinite(lo)||!isFinite(hi)||lo>=hi||lo<-60||hi>100){$('#rmsg').textContent='Enter a valid range: min must be lower than max (between -60 and 100°C).';return}
+    const S=u.real?ST.liveRanges:ST.ranges;u.lo=lo;u.hi=hi;if(lo===u.dlo&&hi===u.dhi)delete S[u.n];else S[u.n]=[lo,hi];
+    save();toast('Safe range updated');u.real?liveRender():render();
+  }
+  else if(t.id==='resetR'){u.lo=u.dlo;u.hi=u.dhi;delete (u.real?ST.liveRanges:ST.ranges)[u.n];save();toast('Range reset to default');u.real?liveRender():render()}
+});
+const LIVE_LO=0,LIVE_HI=5,enc=encodeURIComponent;let liveFirst=true,lastKey='',KEY='',OS=/win/i.test(navigator.platform)?'win':'nix';
+function alertTargets(){ // every active alert: simulated + live
+  const t=[];
+  UNITS.forEach((u,i)=>{if(stat(u)==='alert')t.push({key:u.key,sim:i})});
+  return t;
+}
+$('#bell').onclick=()=>{
+  const all=alertTargets();
+  if(!all.length){toast('No active alerts');return}
+  const fresh=all.filter(t=>!ST.acks[t.key]),c=fresh.length?fresh:all;
+  const t=c[(c.findIndex(x=>x.key===lastKey)+1)%c.length];lastKey=t.key; // repeated clicks cycle
+  let el;
+  if(t.live!==undefined)el=[...document.querySelectorAll('.lc')].find(x=>x.dataset.n===enc(t.live))||$('#live');
+  else{SEL=t.sim;FILT='';QRY='';$('#q').value='';document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.f===''));list();detail();el=$('#detail')}
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  el.animate([{boxShadow:'0 0 0 3px #ff7a55'},{boxShadow:'0 0 0 0 transparent'}],{duration:1400});
+};
+function liveRender(){
+  syncReal();
+  const sn=LASTSN,names=Object.keys(sn);
+  Object.keys(LIVE).forEach(n=>{if(!sn[n])delete LIVE[n]});
+  names.forEach(n=>{const p=sn[n],l=p[p.length-1];LIVE[n]={stale:Date.now()-l.t>120000,bad:l.v<rangeOf(n)[0]||l.v>rangeOf(n)[1]};
+    if(!LIVE[n].bad&&ST.acks['live:'+n]){delete ST.acks['live:'+n];save()}});
+  $('#liveClear').style.display=names.length?'':'none';$('#addSensor').style.display=names.length?'none':'';
+  $('#liveList').innerHTML=names.map(n=>{
+    const p=sn[n],last=p[p.length-1],v=last.v,age=(Date.now()-last.t)/1000,{stale,bad}=LIVE[n],acked=!!ST.acks['live:'+n],R=rangeOf(n);
+    const vals=p.map(x=>x.v),mn=Math.min(R[0],...vals)-.5,mx=Math.max(R[1],...vals)+.5,Y=x=>38-(x-mn)/(mx-mn)*38,W=200;
+    const pts=vals.map((x,i)=>(vals.length>1?i*W/(vals.length-1):W).toFixed(1)+','+Y(x).toFixed(1)).join(' ');
+    const cls=stale?'offline':bad?(acked?'ack':'alert'):'safe';
+    return `<div class="lc ${bad&&!stale?'bad':''}" data-n="${enc(n)}"><button class="x" data-del="${enc(n)}" title="Remove this sensor" aria-label="Remove ${n.replace(/"/g,'')}">✕</button>
+      <small>${n.replace(/</g,'&lt;')}</small><b class="mono">${v.toFixed(1)}°C</b><span class="badge b-${cls}">${stale?'No recent data':bad?(acked?'Acknowledged':'Alert'):'Safe'}</span>
+      <svg viewBox="0 0 ${W} 38" preserveAspectRatio="none"><rect x="0" y="${Y(R[1])}" width="${W}" height="${Y(R[0])-Y(R[1])}" style="fill:var(--band)"/><polyline points="${pts}" fill="none" style="stroke:${bad?'var(--warn)':'var(--trace)'}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+      <small>Safe range: ${R[0]} to ${R[1]}°C</small>
+      <small>${age<60?Math.round(age)+' s':Math.round(age/60)+' min'} ago · ${p.length} reading${p.length>1?'s':''}</small>
+      <button class="gb" data-sim="${enc(n)}" style="margin:8px 6px 0 0;padding:4px 12px;font-size:.8rem">Send another reading</button><button class="gb" data-range="${enc(n)}" style="margin:8px 6px 0 0;padding:4px 12px;font-size:.8rem">✎ Safe range</button>${bad&&!stale&&!acked?`<button class="pb" data-ack="${enc(n)}" style="margin-top:8px;padding:4px 12px;font-size:.8rem">✓ Acknowledge</button>`:''}</div>`}).join('')
+    ||'<p class="rec" style="margin:0">No live sensor yet. Click <b>＋ Add sensor</b> to send a simulated reading.</p>';
+  refreshAll(); // list, details, alerts count and history all follow the live data
+  rwCheck();
+}
+async function pollLive(){
+  const r=await fetch('/api/readings',{credentials:'include'}).then(r=>r.ok?r.json():null).catch(()=>null);
+  if(!r)return;LASTSN=r.sensors;
+  Object.entries(r.sensors).forEach(([n,p])=>{const e=H[n]||(H[n]={t:[],h:[]}),lt=e.t.length?e.t[e.t.length-1]:0;p.forEach(x=>{if(x.t>lt){e.t.push(x.t);e.h.push(x.v)}})});
+  Object.keys(H).forEach(n=>{if(!r.sensors[n])delete H[n]});
+  
+  liveRender();
+}
+$('#liveList').addEventListener('click',async e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.range)openRange(decodeURIComponent(b.dataset.range));else if(b.dataset.sim)openSim(decodeURIComponent(b.dataset.sim));else if(b.dataset.ack){const n=decodeURIComponent(b.dataset.ack);ST.acks['live:'+n]=true;save();toast('Alert acknowledged');liveRender()}
+  else if(b.dataset.del){const n=decodeURIComponent(b.dataset.del);
+    if(!confirm('Remove "'+n+'" and all of its readings?'))return;
+    await fetch('/api/readings?sensor='+b.dataset.del,{method:'DELETE',credentials:'include'});
+    delete LASTSN[n];delete H[n];delete ST.acks['live:'+n];delete ST.liveRanges[n];ST.pausedFeeds[n]=true;save();toast('Sensor removed');liveRender()}
+});
+$('#liveClear').onclick=async()=>{
+  if(!confirm('Remove ALL live sensors and their readings?'))return;
+  await fetch('/api/readings',{method:'DELETE',credentials:'include'});
+  Object.keys(H).forEach(k=>ST.pausedFeeds[k]=true);LASTSN={};Object.keys(H).forEach(k=>delete H[k]);ST.liveRanges={};Object.keys(ST.acks).forEach(k=>{if(k.startsWith('live:'))delete ST.acks[k]});save();toast('All live sensors removed');liveRender();
+};
+$('#mailOn').onchange=e=>{ST.emailAlerts=e.target.checked;save();toast(ST.emailAlerts?'Email alerts on':'Email alerts off')};
+$('#mailTest').onclick=async()=>{const r=await fetch('/api/test-email',{method:'POST',credentials:'include'});const d=await r.json().catch(()=>({}));toast(r.ok?'Test email sent to '+d.to:(d.detail||'Could not send'))};
+const BODY='{"sensor":"Kitchen Fridge","temperature":3.4}';
+function showCmd(){
+  document.querySelectorAll('[data-os]').forEach(b=>b.classList.toggle('on',b.dataset.os===OS));
+  const u=location.origin+'/api/readings';
+  $('#cmd').textContent=OS==='win'
+    ?`Invoke-RestMethod -Method Post -Uri ${u} -Headers @{"X-API-Key"="${KEY}"} -ContentType "application/json" -Body '${BODY}'`
+    :`curl -X POST ${u} -H "Content-Type: application/json" -H "X-API-Key: ${KEY}" -d '${BODY}'`;
+}
+$('#liveDet').addEventListener('click',e=>{const b=e.target.closest('[data-os]');if(b){OS=b.dataset.os;showCmd()}});
+$('#copyCmd').onclick=()=>navigator.clipboard.writeText($('#cmd').textContent).then(()=>toast('Command copied'));
+function openSim(name){
+  setMode('sim');$('#addMode').style.display=name?'none':'';$('#simTitle').textContent=name?'Send another reading':'Add a sensor';
+  const n=$('#simName');n.value=name||'Kitchen Fridge';n.readOnly=!!name;
+  $('#simTemp').value=name?'':'3.4';const rg=rangeOf(name||'');$('#simHint').textContent=name?'Safe range for this sensor: '+rg[0]+' to '+rg[1]+'°C.':'Default safe range is 0 to 5°C. You can change it on the sensor card afterwards.';$('#simErr').style.display='none';$('#sim').classList.add('on');(name?$('#simTemp'):n).focus();
+}
+const closeSim=()=>{$('#sim').classList.remove('on');clearInterval(rwTimer);rwWatch=null};
+$('#addSensor').onclick=()=>openSim();
+$('#simCancel').onclick=closeSim;
+$('#sim').addEventListener('click',e=>{if(e.target.id==='sim')closeSim()});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeSim()});
+$('#simTemp').addEventListener('keydown',e=>{if(e.key==='Enter')$('#simGo').click()});
+$('#simGo').onclick=async()=>{
+  if($('#realPane').style.display==='grid'){$('#sim').classList.remove('on');toast('Waiting for your phone. The sensor will appear here when the first reading arrives.');return} // Done: keep listening in the background
+  const err=$('#simErr'),sensor=$('#simName').value.trim(),t=parseFloat($('#simTemp').value),isNew=!$('#simName').readOnly;
+  const fail=m=>{err.textContent=m;err.style.display='block'};
+  if(!sensor)return fail('Enter a sensor name.');
+  if(!isFinite(t)||t<-60||t>100)return fail('Enter a temperature between -60 and 100°C.');
+  if(ST.pausedFeeds[sensor]){delete ST.pausedFeeds[sensor];save()}
+  const b=$('#simGo');b.disabled=true;b.textContent='Sending…';
+  try{
+    const r=await fetch('/api/simulate-reading',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({sensor,temperature:t})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)return fail(typeof d.detail==='string'?d.detail:'Could not send the reading.');
+    closeSim();toast(d.emailed?'Reading sent. Alert email on its way':d.recovered?'Reading sent. Back-to-normal email on its way':d.alert?'Reading sent. Alert raised':'Reading sent');await pollLive();
+    const ni=UNITS.findIndex(u=>u.real&&u.n===sensor);if(isNew&&ni>=0){SEL=ni;FILT='';QRY='';$('#q').value='';document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.f===''));list();detail()}
+  }catch(x){fail('Network error. Please try again.')}
+  finally{b.disabled=false;b.textContent='Finish'}
+};
+const setTheme=d=>{document.documentElement.classList.toggle('dark',d);$('#theme').innerHTML=(d?'☀️':'🌙')+' <span>'+(d?'Light':'Dark')+'</span>';try{localStorage.setItem('fcDark',d?'1':'0')}catch(e){}};
+$('#theme').onclick=()=>setTheme(!document.documentElement.classList.contains('dark'));
+setTheme(document.documentElement.classList.contains('dark'));
+const bgl=[...document.querySelectorAll('.bgl')];new Image().src='/img/bg-problem.jpg';
+addEventListener('scroll',()=>{const m=document.documentElement,p=scrollY/Math.max(1,m.scrollHeight-innerHeight);bgl[0].classList.toggle('on',p<.4);bgl[1].classList.toggle('on',p>=.4)},{passive:true});
+const rangeOf=n=>{const r=ST.liveRanges[n];return Array.isArray(r)&&r[0]<r[1]?r:[LIVE_LO,LIVE_HI]};
+let rmName='';
+function openRange(n){
+  rmName=n;const r=rangeOf(n);$('#rTitle').textContent='Safe range: '+n;
+  $('#rmLo').value=r[0];$('#rmHi').value=r[1];$('#rmErr').style.display='none';$('#rmod').classList.add('on');$('#rmLo').focus();
+}
+const closeRange=()=>$('#rmod').classList.remove('on');
+$('#rmCancel').onclick=closeRange;
+$('#rmod').addEventListener('click',e=>{if(e.target.id==='rmod')closeRange()});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeRange()});
+$('#rmSave').onclick=()=>{
+  const lo=parseFloat($('#rmLo').value),hi=parseFloat($('#rmHi').value),er=$('#rmErr');
+  if(!isFinite(lo)||!isFinite(hi)||lo>=hi||lo<-60||hi>100){er.textContent='Enter a valid range: min must be lower than max (between -60 and 100°C).';er.style.display='block';return}
+  if(lo===LIVE_LO&&hi===LIVE_HI)delete ST.liveRanges[rmName];else ST.liveRanges[rmName]=[lo,hi];
+  save();closeRange();toast('Safe range updated');liveRender();
+};
+$('#rmReset').onclick=()=>{delete ST.liveRanges[rmName];save();closeRange();toast('Range reset to default');liveRender()};
+let rwWatch=null,rwTimer=null;
+function setMode(m){
+  document.querySelectorAll('#addMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  $('#simPane').style.display=m==='sim'?'contents':'none';
+  $('#realPane').style.display=m==='real'?'grid':'none';
+  $('#simGo').style.display=m==='sim'?'':'none';$('#simGo').textContent=m==='sim'?'Finish':'Done';
+  $('#simCancel').textContent=m==='sim'?'Cancel':'Close';
+  if(m==='real'){['rwName','rwLo','rwHi'].forEach(id=>$('#'+id).readOnly=false);$('#rwSteps').style.display='none';$('#rwCreate').style.display='';$('#rwErr').style.display='none';clearInterval(rwTimer);rwWatch=null}
+}
+$('#addMode').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setMode(b.dataset.m)});
+$('#realPane').addEventListener('click',e=>{const b=e.target.closest('[data-copy]');if(b)navigator.clipboard.writeText($('#'+b.dataset.copy).textContent).then(()=>toast('Copied'))});
+$('#rwCreate').onclick=async()=>{
+  const name=$('#rwName').value.trim(),lo=parseFloat($('#rwLo').value),hi=parseFloat($('#rwHi').value),er=$('#rwErr');
+  const fail=m=>{er.textContent=m;er.style.display='block'};er.style.display='none';
+  if(!name)return fail('Enter a sensor name.');
+  if(!isFinite(lo)||!isFinite(hi)||lo>=hi||lo<-60||hi>100)return fail('Enter a valid range: min must be lower than max (between -60 and 100°C).');
+  if(!KEY){const k=await fetch('/api/device-key',{credentials:'include'}).then(r=>r.json()).catch(()=>null);if(k)KEY=k.key}
+  if(!KEY)return fail('Could not load your key. Please refresh the page and try again.');
+  if(lo===LIVE_LO&&hi===LIVE_HI)delete ST.liveRanges[name];else ST.liveRanges[name]=[lo,hi];
+  delete ST.pausedFeeds[name];save();
+  $('#rwUrl').textContent=location.origin+'/api/ingest/sensor-logger?sensor='+encodeURIComponent(name);
+  $('#rwAuth').textContent='Bearer '+KEY;
+  ['rwName','rwLo','rwHi'].forEach(id=>$('#'+id).readOnly=true);
+  $('#rwSteps').style.display='grid';$('#rwCreate').style.display='none';$('#simGo').style.display='';
+  $('#rwStatus').textContent='⏳ Waiting for the first reading…';
+  rwWatch={name,since:Date.now()};clearInterval(rwTimer);rwTimer=setInterval(rwPoll,5000);
+};
+async function rwPoll(){ // connected but no temperature? tell the user what the app is sending
+  if(!rwWatch)return;
+  if(Date.now()-rwWatch.since>6e5){clearInterval(rwTimer);rwWatch=null;return} // stop waiting after 10 minutes
+  const r=await fetch('/api/ingest-status',{credentials:'include'}).then(r=>r.ok?r.json():null).catch(()=>null);
+  if(r&&r.note&&rwWatch&&r.note.t>rwWatch.since&&r.note.names.length===1&&r.note.names[0]==='test')$('#rwStatus').textContent='✅ Test push received. Now turn on Start Recording in Sensor Logger to send real readings.';
+  else if(r&&r.note&&rwWatch&&r.note.t>rwWatch.since)$('#rwStatus').textContent='Connected, but no usable temperature yet. Sensor Logger sent: '+r.note.names.join(', ')+(r.note.values&&r.note.values.length?'. Temperature values seen: '+r.note.values.join(', '):'. Turn on Battery Temperature in its sensor list.');
+}
+function rwCheck(){ // first reading arrived: celebrate, then open the new sensor
+  if(!rwWatch||!H[rwWatch.name])return;
+  const n=rwWatch.name;rwWatch=null;clearInterval(rwTimer);
+  $('#rwStatus').textContent='✅ Connected! First reading received.';
+  setTimeout(()=>{closeSim();const i=UNITS.findIndex(u=>u.real&&u.n===n);if(i>=0){SEL=i;FILT='';QRY='';$('#q').value='';document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.f===''));list();detail()}},1800);
+}
+function openExport(){
+  $('#xList').innerHTML=UNITS.map((u,i)=>`<label class="xrow"><input type="checkbox" value="${i}" checked><span style="flex:1">${esc(u.n)}</span>${u.real?'<span class="badge b-safe">LIVE</span>':''}<small style="color:var(--mut)">${u.off&&!u.real?'offline':rng(u)}</small></label>`).join('');
+  syncX();xCount();$('#xmod').classList.add('on');
+}
+const xSel=()=>[...document.querySelectorAll('#xList input:checked')].map(x=>UNITS[+x.value]);
+function xCount(){const n=xSel().length;$('#xGo').disabled=!n;$('#xGo').textContent=n?'Download CSV ('+n+' sensor'+(n>1?'s':'')+')':'Select a sensor'}
+let XW=DAY*7; // report period, in 10-minute steps (6h=36, 24h=144, 7d=1008)
+function syncX(){document.querySelectorAll('#xRng button').forEach(b=>b.classList.toggle('on',+b.dataset.xw===XW))}
+$('#xRng').addEventListener('click',e=>{const b=e.target.closest('button');if(b){XW=+b.dataset.xw;syncX()}});
+const closeX=()=>$('#xmod').classList.remove('on');
+$('#xList').addEventListener('change',xCount);
+$('#xAll').onclick=()=>{document.querySelectorAll('#xList input').forEach(x=>x.checked=true);xCount()};
+$('#xNone').onclick=()=>{document.querySelectorAll('#xList input').forEach(x=>x.checked=false);xCount()};
+$('#xGo').onclick=()=>{const us=xSel();if(!us.length)return;
+  const pl={[DAY/4]:'6h',[DAY]:'24h',[DAY*7]:'7d'}[XW];
+  csv(us,XW,us.length===UNITS.length?'full-report-'+pl:us.length===1?us[0].n.replace(/\W+/g,'-').toLowerCase()+'-'+pl:'selected-report-'+pl);closeX()};
+$('#xCancel').onclick=closeX;
+$('#xmod').addEventListener('click',e=>{if(e.target.id==='xmod')closeX()});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeX()});
+$('#csvAll').onclick=openExport;
+$('#q').addEventListener('input',e=>{QRY=e.target.value;list()});
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;FILT=b.dataset.f;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));list()});
+$('#out').onclick=async()=>{await fetch('/api/logout',{method:'POST',credentials:'include'});location.href='/'};
+
+(async()=>{
+  const r=await fetch('/api/me',{credentials:'include'}).then(r=>r.json()).catch(()=>({}));
+  if(!r.authenticated){location.replace('/?signin=1');return}
+  U=r;if(U.admin)$('#adminLink').style.display='';$('#hi').textContent='Hi, '+U.name.split(' ')[0];$('#biz').textContent=U.business+' · Dashboard';
+  build();
+  const sv=await fetch('/api/state',{credentials:'include'}).then(r=>r.ok?r.json():{}).catch(()=>({}));
+  ST={ranges:sv.ranges||{},acks:sv.acks||{},emailAlerts:sv.emailAlerts!==false,liveRanges:sv.liveRanges||{},pausedFeeds:sv.pausedFeeds||{}};$('#mailOn').checked=ST.emailAlerts;
+  UNITS.forEach(u=>{const r=ST.ranges[u.n];if(Array.isArray(r)&&r[0]<r[1]){u.lo=+r[0];u.hi=+r[1]}});
+  render();setInterval(tick,3000);
+  fetch('/api/device-key',{credentials:'include'}).then(r=>r.json()).then(k=>{
+    KEY=k.key;showCmd();if(!k.email_ready)$('#mailNote').textContent='Email is not configured on the server yet.'}).catch(()=>{});
+  loadHistory();pollLive();setInterval(pollLive,4000);document.body.hidden=false;
+})();
+</script>
+</body>
+</html>

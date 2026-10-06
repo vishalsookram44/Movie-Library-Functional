@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Demo requests — FreshCheck</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>try{if(localStorage.getItem("fcDark")==="1")document.documentElement.classList.add("dark")}catch(e){}</script>
+<style>
+:root{--bg:#f2f5de;--card:rgba(242,245,222,.92);--card2:rgba(255,255,255,.75);--line:#d3deb4;--tx:#2b4630;--mut:#55694f;--mint:#4f7a46;--deep:#4f7a46;--warn:#d9481f;--ok:#2f7d3a;--hdr:rgba(242,245,222,.92);--bsafe:#dcedc0;--boff:#f6ecc0;--boffx:#8a6d00;--toastbg:#2b4630;--toasttx:#f4f9e8}
+html.dark{--bg:#111611;--card:#1a221b;--card2:#222d23;--line:#2c3a2d;--tx:#eef5e0;--mut:#9db394;--mint:#cfe88f;--warn:#ff7a55;--ok:#8fdc8f;--hdr:rgba(17,22,17,.94);--bsafe:#17381b;--boff:#3a3418;--boffx:#e8d36a;--toastbg:#cfe88f;--toasttx:#111}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Bricolage Grotesque',system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+body[hidden]{display:none}
+.mono{font-family:'JetBrains Mono',monospace}
+#bg{position:fixed;inset:0;z-index:-1;background:var(--bg) url(/img/bg-hero.jpg) center/cover no-repeat}
+html.dark #bg{display:none}
+button{font:inherit;cursor:pointer;color:inherit}
+header{position:sticky;top:0;z-index:10;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .in{max-width:1200px;margin:auto;padding:0 18px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.2rem;color:var(--tx);text-decoration:none}
+.logo svg{width:30px;height:30px}
+.who{display:flex;align-items:center;gap:10px}
+.gb{background:transparent;border:1px solid var(--line);padding:6px 14px;border-radius:99px;color:var(--tx);text-decoration:none;font-size:.9rem}
+.gb:hover{background:var(--card2)}
+.pb{background:var(--deep);color:#fff;border:0;border-radius:99px;padding:7px 16px}
+main{max-width:1200px;margin:auto;padding:18px 18px 60px}
+h1{font-size:1.7rem;letter-spacing:-.03em;margin:4px 0 2px}
+.card,.st{background:var(--card);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.card{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.st{padding:14px 16px}.st small{color:var(--mut);font-size:.78rem;display:block}.st b{font-size:1.8rem;font-weight:600;line-height:1.2;display:block}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+#q{flex:1;min-width:200px;background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:9px 16px;color:var(--tx);font:inherit}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;color:var(--mut);font-weight:400;padding:6px 8px;white-space:nowrap}
+td{padding:9px 8px;border-top:1px solid var(--line);vertical-align:top}
+td a{color:var(--mint)}
+.badge{font:600 .68rem 'JetBrains Mono',monospace;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.b-on{background:var(--bsafe);color:var(--ok)}.b-pend{background:var(--boff);color:var(--boffx)}
+.x{background:none;border:0;color:var(--mut)}.x:hover{color:var(--warn)}
+.msgc{max-width:240px;color:var(--mut)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--toastbg);color:var(--toasttx);padding:10px 18px;border-radius:99px;font-weight:600;display:none;z-index:20}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.who .gb{padding:5px 9px;font-size:.8rem}.who span{display:none}}
+</style>
+</head>
+<body hidden>
+<div id="bg" aria-hidden="true"></div>
+<header><div class="in">
+  <a class="logo" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4f7a46"/><path d="M18 34l10 10 18-22" fill="none" stroke="#cfe88f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>FreshCheck</a>
+  <div class="who"><a class="gb" href="/dashboard">Dashboard</a><button class="gb" id="theme" aria-label="Toggle dark mode">🌙 <span>Dark</span></button><button class="gb" id="out">Log out</button></div>
+</div></header>
+<main id="main">
+  <h1>Demo requests</h1>
+  <p style="color:var(--mut);font-size:.9rem">Everyone who asked for a demo. Only accounts listed in ADMIN_EMAILS can see this page.</p>
+  <div class="stats" id="stats"></div>
+  <div class="card">
+    <div class="bar"><input id="q" placeholder="🔍  Search name, business, email or type" aria-label="Search"><button class="pb" id="csv">⬇ Export CSV</button></div>
+    <div class="tw"><table id="tbl"></table></div>
+  </div>
+</main>
+<div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s);
+let ROWS=[],Q='';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=t=>new Date(t).toLocaleString([], {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const ago=t=>{if(!t)return 'never';const m=(Date.now()-t)/6e4;return m<1?'just now':m<60?Math.round(m)+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2500)};
+
+function render(){
+  const on=ROWS.filter(r=>r.active).length;
+  $('#stats').innerHTML=[['Total requests',ROWS.length],['Activated accounts',on],['Pending (no password)',ROWS.length-on],['Sent live readings',ROWS.filter(r=>r.readings).length]]
+    .map(([l,v])=>`<div class="st"><small>${l}</small><b class="mono">${v}</b></div>`).join('');
+  const q=Q.toLowerCase(),rows=ROWS.filter(r=>[r.name,r.business,r.email,r.type].join(' ').toLowerCase().includes(q));
+  $('#tbl').innerHTML='<tr><th>Name</th><th>Business</th><th>Type</th><th>Email</th><th>Requested</th><th>Status</th><th>Live readings</th><th>Message</th><th></th></tr>'+
+    (rows.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.business)}</td><td>${esc(r.type)}</td><td><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></td><td>${fmt(r.created)}</td>
+      <td><span class="badge ${r.active?'b-on':'b-pend'}">${r.active?'Active':'Pending'}</span></td><td class="mono">${r.readings?r.readings+' · '+ago(r.last_reading):'none'}</td>
+      <td class="msgc" title="${esc(r.message)}">${esc(r.message.length>70?r.message.slice(0,70)+'…':r.message)||'—'}</td>
+      <td>${r.you?'<small style="color:var(--mut)">You</small>':`<button class="x" data-id="${r.id}" title="Delete this account and its data" aria-label="Delete ${esc(r.name)}">🗑</button>`}</td></tr>`).join('')
+    ||'<tr><td colspan="9" style="color:var(--mut)">No requests match.</td></tr>');
+}
+$('#q').addEventListener('input',e=>{Q=e.target.value;render()});
+$('#tbl').addEventListener('click',async e=>{
+  const b=e.target.closest('.x');if(!b)return;
+  const r=ROWS.find(x=>x.id==b.dataset.id);
+  if(!confirm('Delete '+r.name+' ('+r.email+') and all of their data? This cannot be undone.'))return;
+  const res=await fetch('/api/admin/demo-requests/'+r.id,{method:'DELETE',credentials:'include'});
+  if(!res.ok){const d=await res.json().catch(()=>({}));toast(d.detail||'Could not delete');return}
+  ROWS=ROWS.filter(x=>x.id!==r.id);render();toast('Account deleted');
+});
+$('#csv').onclick=()=>{
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const lines=['Name,Business,Type,Email,Requested,Status,Live readings,Message',...ROWS.map(r=>[r.name,r.business,r.type,r.email,new Date(r.created).toISOString(),r.active?'Active':'Pending',r.readings,r.message].map(q).join(','))];
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
+  a.download='freshcheck-demo-requests.csv';document.body.append(a);a.click();a.remove();toast('CSV downloaded');
+};
+const setTheme=d=>{document.documentElement.classList.toggle('dark',d);$('#theme').innerHTML=(d?'☀️':'🌙')+' <span>'+(d?'Light':'Dark')+'</span>';try{localStorage.setItem('fcDark',d?'1':'0')}catch(e){}};
+$('#theme').onclick=()=>setTheme(!document.documentElement.classList.contains('dark'));
+setTheme(document.documentElement.classList.contains('dark'));
+$('#out').onclick=async()=>{await fetch('/api/logout',{method:'POST',credentials:'include'});location.href='/'};
+
+(async()=>{
+  const r=await fetch('/api/admin/demo-requests',{credentials:'include'}).catch(()=>null);
+  if(!r||r.status===401){location.replace('/?signin=1');return}
+  document.body.hidden=false;
+  if(r.status===403){$('#main').innerHTML='<div class="card"><b>You do not have access to this page.</b><br><span style="color:var(--mut)">Add your account email to the <span class="mono">ADMIN_EMAILS</span> variable in Vercel and redeploy.</span> <a class="gb" href="/dashboard" style="margin-left:8px">Back to dashboard</a></div>';return}
+  ROWS=(await r.json()).requests;render();
+})();
+</script>
+</body>
+</html>

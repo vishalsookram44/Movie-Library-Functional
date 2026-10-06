@@ -1,50 +1,31 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from pydantic import EmailStr
-from sqlalchemy import UniqueConstraint
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, SQLModel
 
 
-class UserBase(SQLModel):
-    username: str = Field(index=True, unique=True)
-    email: EmailStr = Field(index=True, unique=True)
-
-
-class User(UserBase, table=True):
+class DemoUser(SQLModel, table=True):
+    """A prospect who requested a demo. Password stays NULL until they set it."""
     id: Optional[int] = Field(default=None, primary_key=True)
-    password: str
-    profile_picture: Optional[str] = None  # base64 data URL, e.g. "data:image/png;base64,..."
-
-    comments: list["Comment"] = Relationship(back_populates="user")
-
-
-class CommentBase(SQLModel):
-    content: str
-    movie_id: int = Field(index=True)  # TMDB movie id
-    movie_title: Optional[str] = None
+    name: str
+    business: str
+    business_type: str = "Restaurant"
+    message: str = ""
+    email: str = Field(index=True, unique=True)
+    password: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
-class Comment(CommentBase, table=True):
+class DashState(SQLModel, table=True):
+    """Per-user dashboard settings (custom safe ranges, acknowledged alerts) as JSON."""
+    user_id: int = Field(primary_key=True, foreign_key="demouser.id")
+    data: str = "{}"
+
+
+class Reading(SQLModel, table=True):
+    """One temperature reading sent by a sensor / app / script."""
     id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
-    user_id: int = Field(foreign_key="user.id")
-
-    user: Optional[User] = Relationship(back_populates="comments")
-
-
-class MovieReaction(SQLModel, table=True):
-    __table_args__ = (
-        UniqueConstraint("movie_id", "user_id", name="uq_movie_user_reaction"),
-    )
-
-    id: Optional[int] = Field(default=None, primary_key=True)
-    movie_id: int = Field(index=True)  # TMDB movie id
-    user_id: int = Field(foreign_key="user.id", index=True)
-    reaction: str  # "like" or "dislike"
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
-
+    user_id: int = Field(foreign_key="demouser.id", index=True)
+    sensor: str
+    temperature: float
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True)
