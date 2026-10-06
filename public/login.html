@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - TV Movie</title>
+  <meta name="description" content="Tvflix is a popular movie app." />
+  <link rel="shortcut icon" href="./assets/images/tv movie.png" type="image/svg+xml" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <link rel="stylesheet" href="./assets/css/auth.css" />
+  <script src="./assets/js/login-page.js" type="module"></script>
+</head>
+
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <a href="./index.html">
+        <img src="./assets/images/logo2.png" width="140" height="32" alt="Tvflix home" class="logo" />
+      </a>
+
+      <h1 class="auth-title">Log In</h1>
+
+      <form login-form>
+        <div class="form-field">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required autocomplete="username" />
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password" />
+        </div>
+
+        <button type="submit" class="btn-login auth-submit">Log In</button>
+
+        <p class="form-error" form-error></p>
+      </form>
+
+      <p class="auth-switch">Don't have an account? <a href="./register.html">Sign up</a></p>
+    </div>
+  </div>
+</body>
+
+</html>

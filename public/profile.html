@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - TV Movie</title>
+  <meta name="description" content="Tvflix is a popular movie app." />
+  <link rel="shortcut icon" href="./assets/images/tv movie.png" type="image/svg+xml" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <link rel="stylesheet" href="./assets/css/auth.css" />
+  <link rel="stylesheet" href="./assets/css/profile.css" />
+  <script src="./assets/js/auth.js" type="module"></script>
+  <script src="./assets/js/profile-page.js" type="module"></script>
+</head>
+
+<body>
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <img src="./assets/images/logo2.png" width="140" height="32" alt="Tvflix home" />
+    </a>
+
+    <div class="auth-nav" auth-nav></div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="profile-card">
+        <div class="profile-header">
+          <img id="profile-avatar" class="profile-avatar" src="./assets/images/logo2.png" alt="Profile picture" />
+          <div class="profile-info">
+            <h1 class="profile-username" profile-username>&nbsp;</h1>
+            <p class="profile-email" profile-email>&nbsp;</p>
+          </div>
+        </div>
+
+        <div class="profile-tabs">
+          <button type="button" class="profile-tab active" data-tab="overview">Overview</button>
+          <button type="button" class="profile-tab" data-tab="settings">Settings</button>
+        </div>
+
+        <section class="profile-panel" data-panel="overview">
+          <p class="profile-placeholder">
+            This is your profile. Head to the Settings tab to update your username,
+            password, or profile picture.
+          </p>
+        </section>
+
+        <section class="profile-panel" data-panel="settings" hidden>
+          <div class="settings-section">
+            <h2 class="settings-title">Change Username</h2>
+            <form id="username-form" class="settings-form">
+              <div class="form-field">
+                <label for="new-username">New username</label>
+                <input type="text" id="new-username" name="username" required autocomplete="username" />
+              </div>
+              <button type="submit" class="btn-login">Save Username</button>
+              <p class="form-error" data-error="username"></p>
+              <p class="form-success" data-success="username"></p>
+            </form>
+          </div>
+
+          <div class="settings-section">
+            <h2 class="settings-title">Change Password</h2>
+            <form id="password-form" class="settings-form">
+              <div class="form-field">
+                <label for="current-password">Current password</label>
+                <input type="password" id="current-password" name="currentPassword" required
+                  autocomplete="current-password" />
+              </div>
+              <div class="form-field">
+                <label for="new-password">New password</label>
+                <input type="password" id="new-password" name="newPassword" required autocomplete="new-password" />
+              </div>
+              <button type="submit" class="btn-login">Save Password</button>
+              <p class="form-error" data-error="password"></p>
+              <p class="form-success" data-success="password"></p>
+            </form>
+          </div>
+
+          <div class="settings-section">
+            <h2 class="settings-title">Profile Picture</h2>
+            <form id="picture-form" class="settings-form">
+              <div class="form-field">
+                <label for="picture-input">Choose an image (max 2MB)</label>
+                <input type="file" id="picture-input" name="picture" accept="image/*" required />
+              </div>
+              <button type="submit" class="btn-login">Upload Picture</button>
+              <p class="form-error" data-error="picture"></p>
+              <p class="form-success" data-success="picture"></p>
+            </form>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
