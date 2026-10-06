@@ -8,14 +8,6 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_access_token_expires: int = 60 * 24  # minutes (24 hours)
     env: str = "development"
-    # Email alerts: set either RESEND_API_KEY, or the SMTP_* values (+ MAIL_FROM)
-    resend_api_key: str = ""
-    smtp_host: str = ""
-    smtp_port: int = 587
-    smtp_user: str = ""
-    smtp_password: str = ""
-    mail_from: str = ""
-    admin_emails: str = ""  # comma-separated; these accounts can open /admin
 
     model_config = SettingsConfigDict(env_file=".env")
 

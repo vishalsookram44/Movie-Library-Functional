@@ -1,502 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FreshCheck — Know your temperature. Protect your food.</title>
-<meta name="description" content="FreshCheck is a subscription IoT temperature-monitoring service for restaurants, supermarkets, caterers and distributors in Trinidad & Tobago. Real-time alerts, temperature history, one dashboard.">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" as="image" href="img/bg-hero.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root{--ink:#2b4630;--deep:#4f7a46;--mint:#cfe88f;--ice:#e7eed0;--paper:#f2f5de;--mut:#55694f;--warn:#e4572e;--line:#d3deb4;--r:18px}
-*{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth}
-body{font-family:'Bricolage Grotesque',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
-a{color:inherit}
-.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-.mono{font-family:'JetBrains Mono',monospace}
-nav{position:sticky;top:0;z-index:20;background:rgba(242,245,222,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.35rem;text-decoration:none;letter-spacing:-.02em}
-.logo svg{width:34px;height:34px}
-.links{display:flex;gap:22px;align-items:center;font-size:.95rem}
-.links a{text-decoration:none;color:var(--mut)}.links a:hover{color:var(--ink)}
-.btn{white-space:nowrap;display:inline-block;background:var(--deep);color:#fff!important;padding:12px 22px;border-radius:99px;font-weight:600;text-decoration:none;border:0;cursor:pointer;font:inherit;font-weight:600;transition:.2s}
-.btn:hover{background:var(--ink);transform:translateY(-1px)}
-.btn.alt{background:transparent;color:var(--ink)!important;border:1.5px solid var(--ink)}
-.btn.alt:hover{background:var(--ink);color:#fff!important}
-.hero{padding:34px 14px 14px}
-.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:44px;align-items:center}
-.tag{display:inline-block;background:var(--deep);color:var(--mint);font-size:.78rem;padding:5px 12px;border-radius:99px;margin-bottom:18px}
-h1{font-size:clamp(2.3rem,5vw,3.9rem);line-height:1.04;letter-spacing:-.035em;font-weight:800}
-h1 em{font-style:normal;color:var(--deep);background:linear-gradient(transparent 62%,var(--mint) 62%)}
-.hero p.lead{font-size:1.15rem;color:var(--mut);margin:20px 0 28px;max-width:34em}
-.cta{display:flex;gap:12px;flex-wrap:wrap}
-.panel{background:var(--ink);color:#f4f9e8;border-radius:var(--r);padding:20px;box-shadow:0 30px 60px -25px rgba(43,70,48,.55)}
-.panel h3{font-size:.8rem;font-weight:400;color:var(--mint);display:flex;justify-content:space-between}
-.live::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mint);margin-right:6px;animation:p 1.4s infinite}
-@keyframes p{50%{opacity:.25}}
-.units{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
-.unit{background:#365a3a;border-radius:12px;padding:12px;border:1.5px solid transparent;transition:.3s}
-.unit.bad{border-color:var(--warn);background:#4a1f14}
-.unit small{color:#bcd8a6;font-size:.75rem;display:block}
-.unit b{font-size:1.9rem;font-weight:600}
-.unit .st{font-size:.7rem;float:right;margin-top:6px}
-.unit svg{width:100%;height:34px;display:block;margin-top:4px}
-.unit svg polyline{fill:none;stroke:var(--mint);stroke-width:2}
-.unit.bad svg polyline{stroke:#ff9a7a}
-#log{font-size:.75rem;color:#bcd8a6;min-height:54px;max-height:54px;overflow:hidden}
-#log div{padding:1px 0}#log .a{color:#ff9a7a}
-.panel .row{display:flex;gap:8px;margin-top:10px}
-.panel button{flex:1;background:transparent;color:#f4f9e8;border:1px solid #557d55;border-radius:10px;padding:9px;font:inherit;font-size:.85rem;cursor:pointer}
-.panel button:hover{background:#365a3a}
-section{padding:26px 14px}
-h2{font-size:clamp(1.8rem,3.5vw,2.6rem);letter-spacing:-.03em;line-height:1.1;margin-bottom:14px}
-.sub{color:var(--mut);max-width:38em;margin-bottom:36px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:26px}
-.card .n{font-family:'JetBrains Mono',monospace;color:var(--deep);font-size:.85rem;background:var(--ice);display:inline-block;padding:3px 10px;border-radius:99px;margin-bottom:12px}
-.card h3{font-size:1.2rem;margin-bottom:6px}.card p{color:var(--mut);font-size:.97rem}
-
-.story{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.story .card.bad{border-color:#f1c4b6;background:#fff7f4}
-.story .card.good{border-color:#a8e6cf;background:#f2fdf8}
-.plans{align-items:stretch}
-.plan{display:flex;flex-direction:column}
-.plan.pop{background:var(--ink);color:#f4f9e8;border-color:var(--ink)}
-.plan.pop p,.plan.pop li{color:#cfe1c0}
-.price{font-size:2.5rem;font-weight:800;letter-spacing:-.03em;margin:8px 0}
-.price small{font-size:1rem;font-weight:400;color:var(--mut)}
-.plan ul{list-style:none;padding:0;margin:14px 0 22px;flex:1}
-.plan li{padding:6px 0 6px 26px;position:relative;color:var(--mut);font-size:.95rem}
-.plan li::before{content:"✓";position:absolute;left:0;color:var(--deep);font-weight:800}
-.plan.pop li::before{color:var(--mint)}
-.plan.pop .btn{background:var(--mint);color:var(--ink)!important}
-.note{font-size:.85rem;color:var(--mut);margin-top:16px}
-#bg{position:fixed;inset:0;z-index:-1;background:var(--paper)}
-.bgl{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;opacity:0;transition:opacity .9s ease}
-.bgl.on{opacity:1}
-.bgl[data-k=a]{background-image:url(img/bg-hero.jpg)}
-.bgl[data-k=b]{background-image:url(img/bg-problem.jpg)}
-.hero>.wrap,section>.wrap{max-width:1060px;background:rgba(242,245,222,.9);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border-radius:28px;padding:46px 44px;box-shadow:0 18px 50px -28px rgba(43,70,48,.45)}
-#who{padding:0;background:var(--paper) url(img/bg-who.jpg) center/cover no-repeat;aspect-ratio:16/9;display:flex;align-items:center}
-.split-in{margin-left:46%;width:48%;padding:20px 0}
-.starlist{list-style:none;padding:0;margin:0}
-.starlist li{display:flex;align-items:center;gap:16px;padding:13px 4px;font-size:clamp(1rem,1.9vw,1.5rem);font-weight:500;border-bottom:3px dashed #b5c261}
-.starlist li:last-child{border-bottom:0}
-.starlist li::before{content:"";flex:0 0 34px;height:34px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f6c56a' d='M12 1.5l3 7.2 7.7.6-5.9 5 1.9 7.5L12 17.9 5.3 21.8l1.9-7.5-5.9-5 7.7-.6z' transform='rotate(-12 12 12)'/%3E%3C/svg%3E") center/contain no-repeat}
-form{display:grid;gap:12px;max-width:520px}
-input,select,textarea{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fff}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--mint);border-color:var(--deep)}
-#ok{display:none;background:#e0fbef;border:1px solid #a8e6cf;padding:14px;border-radius:12px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:34px}
-.stat{border-left:4px solid var(--mint);background:#fff;padding:18px 20px;border-radius:0 var(--r) var(--r) 0}
-.stat b{display:block;font-size:2.4rem;font-weight:800;letter-spacing:-.03em;color:var(--deep);line-height:1.1}
-.stat span{font-size:.92rem;color:var(--mut)}
-.calc{background:var(--ink);color:#f4f9e8;border-radius:var(--r);padding:30px;display:grid;grid-template-columns:1.1fr 1fr;gap:34px}
-.calc h3{font-size:1.5rem;letter-spacing:-.02em;margin-bottom:6px}
-.calc p{color:#cfe1c0;font-size:.95rem}
-.calc label{display:block;font-size:.85rem;color:var(--mint);margin-top:16px}
-.calc input[type=number]{background:#365a3a;border-color:#557d55;color:#fff;margin-top:4px}
-.calc input[type=range]{padding:0;border:0;accent-color:var(--mint);margin-top:6px}
-.res{background:#365a3a;border-radius:14px;padding:22px;align-self:center}
-.res small{color:#bcd8a6;display:block;font-size:.8rem}
-.res .big{font-size:2.5rem;font-weight:800;letter-spacing:-.03em;color:#ff9a7a;line-height:1.1;margin:2px 0 14px}
-.res .big.ok{color:var(--mint)}
-.res .line{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid #456b46;font-size:.92rem}
-.src{font-size:.8rem;color:var(--mut);margin-top:14px}
-#formErr,#pwErr,#loginErr,#resetErr{display:none;background:#fff1ec;border:1px solid #f1c4b6;padding:14px;border-radius:12px}
-.hp{position:absolute;left:-9999px}
-.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
-footer{background:var(--ink);color:#cfe1c0;padding:56px 0 30px}
-footer .vals{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:28px 0;padding:28px 0;border-top:1px solid #456b46;border-bottom:1px solid #456b46}
-footer .vals b{color:var(--mint);display:block;font-size:1.05rem;margin-bottom:4px}
-footer .vals span{font-size:.9rem}
-footer .top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
-footer .logo{color:#fff}
-.slogan{font-size:1.25rem;color:#fff;font-weight:600;letter-spacing:-.01em}
-.small{font-size:.8rem;margin-top:8px}
-#chatBtn{position:fixed;right:20px;bottom:20px;z-index:30;width:56px;height:56px;border-radius:50%;background:var(--deep);color:#fff;border:0;font-size:1.5rem;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.25)}
-#chat{position:fixed;right:20px;bottom:88px;z-index:30;width:320px;max-width:calc(100vw - 40px);background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 20px 50px rgba(43,70,48,.3);display:none;overflow:hidden}
-#chat header{background:var(--deep);color:#fff;padding:12px 16px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
-#chatX{background:none;border:0;color:#fff;font-size:1.4rem;line-height:1;cursor:pointer;padding:0 2px}
-#msgs{height:220px;overflow:auto;padding:12px;font-size:.9rem;display:flex;flex-direction:column;gap:8px}
-#msgs div{padding:8px 12px;border-radius:12px;max-width:88%}
-#msgs .bot{background:var(--ice)}#msgs .me{background:var(--deep);color:#fff;align-self:flex-end}
-#qs{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 12px}
-#qs button{border:1px solid var(--deep);background:#fff;border-radius:99px;padding:5px 11px;font:inherit;font-size:.78rem;cursor:pointer}
-#qs button:hover{background:var(--ice)}
-@media(max-width:860px){.hero>.wrap,section>.wrap{padding:28px 20px;background:rgba(242,245,222,.95)}#who{aspect-ratio:auto;background-size:auto 230px;background-position:left top;padding:230px 14px 26px}.split-in{margin:0;width:100%;background:rgba(242,245,222,.95);border-radius:22px;padding:24px 20px}.stats,.calc{grid-template-columns:1fr}.hero .wrap,.demo-grid,.grid3,.story{grid-template-columns:1fr}footer .vals{grid-template-columns:1fr 1fr}.links a:not(.btn){display:none}.links a.btn:not(#navDash){display:none}}
-@media(prefers-reduced-motion:reduce){.bgl{transition:none}*{animation:none!important;scroll-behavior:auto!important}}
-#auth{display:none;position:fixed;inset:0;z-index:50;background:rgba(20,30,20,.62);align-items:center;justify-content:center;padding:20px}
-#auth.on{display:flex}
-#auth .box{background:#fff;border-radius:var(--r);padding:30px;width:100%;max-width:400px;position:relative;display:grid;gap:12px}
-#auth h3{font-size:1.4rem;letter-spacing:-.02em}#auth p{color:var(--mut);font-size:.92rem}
-#authX{position:absolute;right:14px;top:10px;background:none;border:0;font-size:1.6rem;cursor:pointer;color:var(--mut)}
-#pwForm h3{font-size:1.35rem;letter-spacing:-.02em}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TV Movie</title>
+  <meta name="title" content="Tvflix" />
+  <meta name="description" content="Tvflix is a popular movie app." />
+  <link rel="shortcut icon" href="./assets/images/tv movie.png" type="image/svg+xml" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <link rel="stylesheet" href="./assets/css/auth.css" />
+  <script src="./assets/js/global.js" defer></script>
+  <script src="./assets/js/index.js" type="module"></script>
+  <script src="./assets/js/auth.js" type="module"></script>
 </head>
+
 <body>
-<div id="bg" aria-hidden="true"><div class="bgl on" data-k="a"></div><div class="bgl" data-k="b"></div></div>
+  <!-- Header -->
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <img src="./assets/images/logo2.png" width="140" height="32" alt="Tvflix home" />
+    </a>
 
-<nav><div class="wrap">
-  <a href="#" class="logo" aria-label="FreshCheck home">
-    <svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4f7a46"/><path d="M18 34l10 10 18-22" fill="none" stroke="#cfe88f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    FreshCheck
-  </a>
-  <div class="links">
-    <a href="#why-now">Why now</a><a href="#how">How it works</a><a href="#why">Why FreshCheck</a><a href="#pricing">Pricing</a><a href="#who">Who it's for</a>
-    <a class="btn alt" id="navDash" href="/dashboard" style="padding:8px 16px">Dashboard</a><a class="btn" href="#demo">Book a demo</a>
-  </div>
-</div></nav>
+    <div class="search-box" search-box>
+      <div class="search-wrapper" search-wrapper>
+        <input type="text" name="search" placeholder="Search any movies..." class="search-field"
+          aria-label="search movies" autocomplete="off" search-field />
 
-<header class="hero" data-bg="a"><div class="wrap">
-  <div>
-    <span class="tag mono">IoT FOOD-SAFETY MONITORING</span>
-    <h1>Know your temperature. <em>Protect your food.</em></h1>
-    <p class="lead">FreshCheck uses smart sensors and a live dashboard to track the temperature of your food in storage and delivery — and alerts you the moment it leaves the safe range, not the next morning.</p>
-    <div class="cta"><a class="btn" href="#demo">Book a free demo</a><a class="btn alt" href="#pricing">See pricing</a></div>
-  </div>
-  <div class="panel" aria-label="Live FreshCheck dashboard demo">
-    <h3 class="mono"><span class="live">LIVE DEMO · SIMULATED DATA</span><span>Safe: 0–5°C</span></h3>
-    <div class="units" id="units"></div>
-    <div id="log" class="mono"></div>
-    <div class="row"><button id="fail">⚠ Simulate fridge failure</button><button id="fix">✓ Restore cooling</button></div>
-  </div>
-</div></header>
+        <img src="./assets/images/search.png" width="24" height="24" alt="search" class="leading-icon" />
+      </div>
 
-<section id="problem" data-bg="b"><div class="wrap">
-  <h2>The problem: you find out too late.</h2>
-  <p class="sub">Manual temperature checks only tell you the temperature at the moment someone looks. Everything in between is a blind spot.</p>
-  <div class="story">
-    <div class="card bad"><span class="n">WITHOUT FRESHCHECK</span><h3>Fridge fails at 11 pm</h3><p>Nobody notices until the morning check. Hours above a safe temperature, stock thrown out, money lost, customers potentially at risk.</p></div>
-    <div class="card good"><span class="n">WITH FRESHCHECK</span><h3>Manager is alerted at 11:07 pm</h3><p>The alert arrives while the problem is happening. The fridge is checked, stock is moved, and most of the food is saved.</p></div>
-  </div>
-</div></section>
-
-<section id="why-now" data-bg="b" class="alt-bg"><div class="wrap">
-  <h2>Why now: food waste is expensive</h2>
-  <p class="sub">Food waste is a global problem, and food service and retail are a large part of it. Cold storage failures are one of the most preventable causes for a business.</p>
-  <div class="stats">
-    <div class="stat"><b>1.05 bn</b><span>tonnes of food wasted worldwide in 2022</span></div>
-    <div class="stat"><b>19%</b><span>of food available to consumers was wasted</span></div>
-    <div class="stat"><b>290 m</b><span>tonnes of that came from food service alone</span></div>
-  </div>
-  <div class="calc">
-    <div>
-      <h3>What could one bad night cost you?</h3>
-      <p>Adjust the sliders to your own business. This is an illustrative estimate, not a guarantee.</p>
-      <label for="cStock">Value of food in your cold storage: <b id="vStock"></b></label>
-      <input type="range" id="cStock" min="1000" max="100000" step="500" value="8000">
-      <label for="cFail">Temperature failures per year: <b id="vFail"></b></label>
-      <input type="range" id="cFail" min="1" max="12" step="1" value="2">
-      <label for="cLoss">Share of stock lost when found late: <b id="vLoss"></b></label>
-      <input type="range" id="cLoss" min="10" max="100" step="5" value="50">
+      <button class="search-btn" search-toggler>
+        <img src="./assets/images/close.png" width="24" height="24" alt="close search box" />
+      </button>
     </div>
-    <div class="res">
-      <small>Estimated food loss per year</small>
-      <div class="big" id="rLoss">TT$0</div>
-      <div class="line"><span>Starter plan (12 months)</span><b id="rPlan">TT$3,588</b></div>
-      <div class="line"><span>If alerts save half of that loss</span><b id="rSave">TT$0</b></div>
-      <div class="line"><span>Net result</span><b id="rNet">TT$0</b></div>
-    </div>
-  </div>
-  <p class="src">Global figures: UN Environment Programme, Food Waste Index Report 2024 (data for 2022). Calculator uses your inputs only and excludes setup fees.</p>
-</div></section>
 
-<section id="how" data-bg="b"><div class="wrap">
-  <h2>How FreshCheck works</h2>
-  <p class="sub">Sensors, cloud platform and dashboard — delivered as one simple monthly service.</p>
-  <div class="grid3">
-    <div class="card"><span class="n">01 · SENSE</span><h3>Sensors go inside</h3><p>We install sensors in your refrigerators, freezers, cold rooms or refrigerated delivery containers. They read temperature continuously.</p></div>
-    <div class="card"><span class="n">02 · ANALYSE</span><h3>Cloud tracks it</h3><p>Readings stream to the FreshCheck cloud platform and are stored, so you always have a full temperature history.</p></div>
-    <div class="card"><span class="n">03 · ALERT</span><h3>You act early</h3><p>Set your own safe range. If a reading goes outside it, FreshCheck alerts you automatically so you can respond immediately.</p></div>
-  </div>
-</div></section>
+    <button class="search-btn" search-toggler menu-close>
+      <img src="./assets/images/search.png" width="24" height="24" alt="open search box" />
+    </button>
 
-<section id="why" data-bg="b" class="alt-bg"><div class="wrap">
-  <h2>What you get</h2>
-  <p class="sub">Three benefits that protect your stock and your reputation.</p>
-  <div class="grid3">
-    <div class="card"><span class="n">PREVENTION</span><h3>Respond earlier</h3><p>Catch failing equipment or an open door while there's still time to save the stock.</p></div>
-    <div class="card"><span class="n">REDUCED WASTE</span><h3>Lose less food</h3><p>Identify problems before large quantities are lost — and review history to spot recurring issues.</p></div>
-    <div class="card"><span class="n">VISIBILITY</span><h3>One platform</h3><p>Monitor multiple storage areas, locations or delivery vehicles from a single dashboard, anywhere.</p></div>
-  </div>
-  <p class="note">Coming next: analytics that flag patterns, such as a fridge that warms up at the same time every day.</p>
-</div></section>
+    <div class="auth-nav" auth-nav></div>
 
-<section id="who"><div class="split-in">
-  <h2>Built for food businesses</h2>
-  <p class="sub" style="margin-bottom:14px">Especially small and medium-sized businesses that want reliable monitoring without enterprise complexity or cost.</p>
-  <ul class="starlist"><li>Restaurants</li><li>Supermarkets</li><li>Caterers</li><li>Food distributors</li><li>Hotels</li><li>Grocery delivery</li></ul>
-</div></section>
+    <button class="menu-btn" menu-btn menu-toggler>
+      <img src="./assets/images/menu.png" class="menu" width="24" height="24" alt="open menu" />
+      <img src="./assets/images/menu-close.png" width="24" height="24" alt="close menu" class="close" />
+    </button>
+  </header>
 
-<section id="pricing" data-bg="a"><div class="wrap">
-  <h2>Simple monthly pricing</h2>
-  <p class="sub">Pay monthly for continuous monitoring instead of buying a system outright.</p>
-  <div class="grid3 plans">
-    <div class="card plan"><span class="n">STARTER</span><div class="price">TT$299<small> /month</small></div><p>For a single kitchen or shop.</p><ul><li>Up to 5 sensors</li><li>Real-time dashboard</li><li>Automatic out-of-range alerts</li><li>Temperature history</li></ul><a class="btn alt" href="#demo">Get started</a></div>
-    <div class="card plan pop"><span class="n">BUSINESS</span><div class="price">TT$599<small> /month</small></div><p>For growing, multi-area operations.</p><ul><li>Up to 15 sensors</li><li>Multiple monitoring locations</li><li>Advanced reporting</li><li>Everything in Starter</li></ul><a class="btn" href="#demo">Get started</a></div>
-    <div class="card plan"><span class="n">ENTERPRISE</span><div class="price">Custom</div><p>For distributors and multi-site groups.</p><ul><li>Custom sensor count</li><li>Any number of locations</li><li>Tailored to your operation</li><li>Priority support</li></ul><a class="btn alt" href="#demo">Talk to us</a></div>
-  </div>
-  <p class="note">A one-time setup and installation fee covers the initial sensors and installation. Pricing shown in Trinidad &amp; Tobago dollars.</p>
-</div></section>
+  <main>
+    <!-- Sidebar -->
+    <nav class="sidebar" sidebar></nav>
 
-<section id="demo" data-bg="a" class="alt-bg"><div class="wrap demo-grid">
-  <div>
-    <h2>Book your free demo</h2>
-    <p class="sub">See FreshCheck monitor a real fridge, ask questions, and find the right plan. After signing up you'll get a short email series explaining how it all works.</p>
-    <p class="mono" style="font-size:.85rem;color:var(--mut)">Or email us: <a href="mailto:hello@freshcheck.tt">hello@freshcheck.tt</a></p>
-  </div>
-  <div>
-    <form id="pwForm" novalidate style="display:none">
-      <h3 id="pwHi"></h3>
-      <p class="sub" style="margin:0">One last step: create a password to open your FreshCheck demo dashboard.</p>
-      <input type="password" name="pw" placeholder="Password (min. 8 characters)" autocomplete="new-password" aria-label="Password">
-      <input type="password" name="pw2" placeholder="Confirm password" autocomplete="new-password" aria-label="Confirm password">
-      <button class="btn" type="submit" id="pwBtn">Confirm &amp; open dashboard</button>
-      <div id="pwErr" role="alert"></div>
-    </form>
-    <form id="form" novalidate>
-      <input class="hp" type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <input required name="name" placeholder="Your name" aria-label="Your name">
-      <input required name="biz" placeholder="Business name" aria-label="Business name">
-      <input required type="email" name="email" placeholder="Email address" aria-label="Email address">
-      <select name="type" aria-label="Business type"><option>Restaurant</option><option>Supermarket</option><option>Caterer</option><option>Food distributor</option><option>Hotel</option><option>Grocery delivery</option><option>Other</option></select>
-      <textarea name="msg" rows="3" placeholder="Anything we should know? (e.g. number of fridges or vehicles)"></textarea>
-      <button class="btn" type="submit" id="sendBtn">Request my demo</button>
-      
-      <div id="formErr" role="alert"></div>
-    </form>
-  </div>
-</div></section>
+    <div class="overlay" overlay menu-toggler></div>
 
-<footer><div class="wrap">
-  <div class="top">
-    <a href="#" class="logo"><svg viewBox="0 0 64 64" width="34" height="34"><rect width="64" height="64" rx="16" fill="#4f7a46"/><path d="M18 34l10 10 18-22" fill="none" stroke="#cfe88f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>FreshCheck</a>
-    <div class="slogan">Know your temperature. Protect your food.</div>
-  </div>
-  <div class="vals">
-    <div><b>Food safety</b><span>Every alert exists to keep food and customers safe.</span></div>
-    <div><b>Reliability</b><span>Monitoring you can depend on, day and night.</span></div>
-    <div><b>Affordability</b><span>Real-time technology priced for small and medium businesses.</span></div>
-    <div><b>Innovation</b><span>Always improving with data, analytics and customer feedback.</span></div>
-  </div>
-  <p>Our mission: help food businesses reduce preventable food waste and improve temperature monitoring through affordable, real-time technology.</p>
-  <p class="small">© <span id="yr"></span> FreshCheck. All rights reserved. Trinidad &amp; Tobago.</p>
-</div></footer>
+    <article class="container" page-content></article>
 
-<div id="auth" role="dialog" aria-modal="true" aria-label="Sign in"><div class="box">
-  <button id="authX" aria-label="Close">&times;</button>
-  <h3 id="authTitle">Sign in to the dashboard</h3><p id="authSub">Sign in to open your FreshCheck demo dashboard.</p>
-  <form id="loginForm" novalidate>
-    <input type="email" name="email" placeholder="Email address" autocomplete="email" required aria-label="Email address">
-    <input type="password" name="password" placeholder="Password" autocomplete="current-password" required aria-label="Password">
-    <button class="btn" type="submit" id="loginBtn">Sign in</button>
-    <div id="loginErr" role="alert"></div>
-  </form>
-  <form id="forgotForm" novalidate style="display:none">
-    <input type="email" name="email" placeholder="Email address" autocomplete="email" required aria-label="Email address">
-    <button class="btn" type="submit" id="forgotBtn">Send reset link</button>
-    <div id="forgotMsg" role="status" style="display:none;font-size:.9rem"></div>
-  </form>
-  <form id="resetForm" novalidate style="display:none">
-    <input type="password" name="pw" placeholder="New password (min. 8 characters)" autocomplete="new-password" aria-label="New password">
-    <input type="password" name="pw2" placeholder="Confirm new password" autocomplete="new-password" aria-label="Confirm new password">
-    <button class="btn" type="submit" id="resetBtn">Set new password</button>
-    <div id="resetErr" role="alert"></div>
-  </form>
-  <p id="authLinks"><a href="#" id="forgotLink">Forgot your password?</a></p>
-  <p id="backLink" style="display:none"><a href="#" id="toLogin">Back to sign in</a></p>
-  <p id="signupLine">New here? <a href="#demo" id="toSignup">Sign up by requesting a free demo</a></p>
-</div></div>
+  </main>
 
-<button id="chatBtn" aria-label="Open chat">💬</button>
-<div id="chat" role="dialog" aria-label="FreshCheck assistant">
-  <header>FreshCheck Assistant<button id="chatX" aria-label="Close chat">&times;</button></header>
-  <div id="msgs"><div class="bot">Hi! Ask me about pricing, installation or how alerts work.</div></div>
-  <div id="qs"></div>
-</div>
-
-<script>
-document.getElementById('yr').textContent=new Date().getFullYear();
-
-/* ---------- Scroll-linked background ---------- */
-(function(){
-  const layers=[...document.querySelectorAll('.bgl')],secs=[...document.querySelectorAll('[data-bg]')];let cur='a',t=false;
-  function upd(){t=false;const mid=innerHeight*.5;let k=null;
-    secs.forEach(x=>{const r=x.getBoundingClientRect();if(r.top<=mid&&r.bottom>=mid)k=x.dataset.bg});
-    if(k&&k!==cur){cur=k;layers.forEach(l=>l.classList.toggle('on',l.dataset.k===k))}}
-  addEventListener('scroll',()=>{if(!t){t=true;requestAnimationFrame(upd)}},{passive:true});
-  addEventListener('resize',upd);upd();
-  const p=new Image();p.src='img/bg-problem.jpg'; // warm the cache
-})();
-
-/* ---------- Live demo (simulated) ---------- */
-const MIN=0,MAX=5;
-const units=[
-  {n:'Kitchen fridge',t:3.2,h:[]},{n:'Walk-in cold room',t:2.4,h:[]},
-  {n:'Delivery van 1',t:3.8,h:[]},{n:'Dessert display',t:4.1,h:[]}
-];
-let failing=false, alerted=false;
-const box=document.getElementById('units'),log=document.getElementById('log');
-box.innerHTML=units.map((u,i)=>`<div class="unit" id="u${i}"><small>${u.n}</small><span class="st mono" id="s${i}">SAFE</span><b class="mono" id="t${i}">--</b><svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline id="p${i}" points=""/></svg></div>`).join('');
-function say(msg,a){const d=document.createElement('div');if(a)d.className='a';d.textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})+'  '+msg;log.prepend(d);while(log.children.length>3)log.lastChild.remove()}
-function tick(){
-  units.forEach((u,i)=>{
-    const target=(i===0&&failing)?9:[3.2,2.4,3.8,4.1][i];
-    u.t+=(target-u.t)*(i===0&&failing?.07:.25)+(Math.random()-.5)*.25;
-    u.h.push(u.t);if(u.h.length>30)u.h.shift();
-    const bad=u.t<MIN||u.t>MAX;
-    document.getElementById('t'+i).textContent=u.t.toFixed(1)+'°C';
-    document.getElementById('s'+i).textContent=bad?'ALERT':'SAFE';
-    document.getElementById('u'+i).classList.toggle('bad',bad);
-    document.getElementById('p'+i).setAttribute('points',u.h.map((v,k)=>`${k*100/29},${30-Math.max(0,Math.min(1,(v-0)/10))*28}`).join(' '));
-    if(i===0){
-      if(bad&&!alerted){alerted=true;say('ALERT sent: '+u.n+' at '+u.t.toFixed(1)+'°C (above 5°C)',true)}
-      if(!bad&&alerted){alerted=false;say(u.n+' back in safe range')}
-    }
-  });
-}
-say('Monitoring 4 units — all within safe range');
-setInterval(tick,1000);tick();
-document.getElementById('fail').onclick=()=>{failing=true;say('Simulating cooling failure on Kitchen fridge…')};
-document.getElementById('fix').onclick=()=>{failing=false;say('Cooling restored')};
-
-/* ---------- Lead capture + profile + password + sign-in ---------- */
-const WEB3FORMS_KEY='PASTE_YOUR_ACCESS_KEY_HERE';
-const FALLBACK_EMAIL='hello@freshcheck.tt';
-const g=id=>document.getElementById(id);
-const form=g('form'),pwForm=g('pwForm'),err=g('formErr'),sendBtn=g('sendBtn'),auth=g('auth'),lf=g('loginForm');
-const api=(p,b)=>fetch(p,{method:b?'POST':'GET',credentials:'include',headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});
-const jerr=async r=>{const d=await r.json().catch(()=>({}));return typeof d.detail==='string'?d.detail:'Please check your details and try again.'};
-const showErr=(el,m)=>{el.textContent=m;el.style.display='block'};
-let setupToken=null;
-
-function notifyLead(f){ // Web3Forms email (fire-and-forget, never blocks the flow)
-  if(WEB3FORMS_KEY.startsWith('PASTE'))return;
-  fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
-    body:JSON.stringify({access_key:WEB3FORMS_KEY,subject:'New FreshCheck demo request — '+f.biz,from_name:'FreshCheck Website',
-      name:f.name,business:f.biz,business_type:f.type,email:f.email,message:f.msg||'(none)',botcheck:''})}).catch(()=>{});
-}
-// Step 1: create profile
-form.addEventListener('submit',async e=>{
-  e.preventDefault();err.style.display='none';
-  if(!form.checkValidity()){form.reportValidity();return}
-  const f=Object.fromEntries(new FormData(form));
-  if(f.botcheck)return; // spam trap
-  sendBtn.disabled=true;sendBtn.textContent='Creating your profile…';
-  try{
-    const r=await api('/api/request-demo',{name:f.name,biz:f.biz,email:f.email,type:f.type,msg:f.msg||''});
-    if(!r.ok)throw new Error(await jerr(r));
-    setupToken=(await r.json()).setup_token;
-    notifyLead(f);
-    g('pwHi').textContent='Welcome, '+f.name.split(' ')[0]+'! Profile created for '+f.biz+'.';
-    form.style.display='none';pwForm.style.display='grid';pwForm.pw.focus();
-  }catch(x){showErr(err,x.message||'Sorry, something went wrong. Please email '+FALLBACK_EMAIL)}
-  finally{sendBtn.disabled=false;sendBtn.textContent='Request my demo'}
-});
-// Step 2: set password -> dashboard
-pwForm.addEventListener('submit',async e=>{
-  e.preventDefault();const pe=g('pwErr');pe.style.display='none';
-  const p=pwForm.pw.value;
-  if(p.length<8)return showErr(pe,'Password must be at least 8 characters.');
-  if(p!==pwForm.pw2.value)return showErr(pe,'Passwords do not match.');
-  const b=g('pwBtn');b.disabled=true;b.textContent='Opening dashboard…';
-  try{
-    const r=await api('/api/set-password',{setup_token:setupToken,password:p});
-    if(!r.ok)throw new Error(await jerr(r));
-    location.href='/dashboard';
-  }catch(x){showErr(pe,x.message);b.disabled=false;b.textContent='Confirm & open dashboard'}
-});
-// Dashboard nav + sign-in modal
-const openAuth=()=>{authView('login');auth.classList.add('on');lf.email.focus()},closeAuth=()=>auth.classList.remove('on');
-g('navDash').addEventListener('click',async e=>{
-  e.preventDefault();
-  const d=await api('/api/me').then(r=>r.json()).catch(()=>({}));
-  d.authenticated?location.href='/dashboard':openAuth();
-});
-g('authX').onclick=closeAuth;g('toSignup').onclick=closeAuth;
-auth.addEventListener('click',e=>{if(e.target===auth)closeAuth()});
-addEventListener('keydown',e=>{if(e.key==='Escape')closeAuth()});
-if(new URLSearchParams(location.search).has('signin'))openAuth();
-lf.addEventListener('submit',async e=>{
-  e.preventDefault();const le=g('loginErr');le.style.display='none';
-  if(!lf.checkValidity()){lf.reportValidity();return}
-  const b=g('loginBtn');b.disabled=true;b.textContent='Signing in…';
-  try{
-    const r=await api('/api/login',{email:lf.email.value.trim(),password:lf.password.value});
-    if(!r.ok)throw new Error(await jerr(r));
-    location.href='/dashboard';
-  }catch(x){showErr(le,x.message);b.disabled=false;b.textContent='Sign in'}
-});
-
-/* ---------- Forgot / reset password ---------- */
-function authView(v){
-  const T={login:['Sign in to the dashboard','Sign in to open your FreshCheck demo dashboard.'],
-    forgot:['Reset your password','Enter your email and we will send you a link to choose a new password.'],
-    reset:['Choose a new password','Enter a new password for your account.']}[v];
-  g('authTitle').textContent=T[0];g('authSub').textContent=T[1];
-  g('loginForm').style.display=v==='login'?'':'none';g('forgotForm').style.display=v==='forgot'?'':'none';g('resetForm').style.display=v==='reset'?'':'none';
-  g('authLinks').style.display=v==='login'?'':'none';g('backLink').style.display=v==='forgot'?'':'none';g('signupLine').style.display=v==='login'?'':'none';
-}
-g('forgotLink').onclick=e=>{e.preventDefault();authView('forgot');g('forgotForm').email.value=lf.email.value;g('forgotForm').email.focus()};
-g('toLogin').onclick=e=>{e.preventDefault();authView('login')};
-g('forgotForm').addEventListener('submit',async e=>{
-  e.preventDefault();const f=g('forgotForm'),m=g('forgotMsg');
-  if(!f.checkValidity()){f.reportValidity();return}
-  const b=g('forgotBtn');b.disabled=true;b.textContent='Sending…';
-  try{
-    const r=await api('/api/forgot-password',{email:f.email.value.trim()});
-    const d=await r.json().catch(()=>({}));
-    m.style.color=r.ok?'var(--deep)':'var(--warn)';
-    m.textContent=r.ok?d.message:'Something went wrong. Please try again.';
-  }catch(x){m.style.color='var(--warn)';m.textContent='Network error. Please try again.'}
-  m.style.display='block';b.disabled=false;b.textContent='Send reset link';
-});
-const resetToken=new URLSearchParams(location.search).get('reset');
-if(resetToken){history.replaceState(null,'','/');auth.classList.add('on');authView('reset')}
-g('resetForm').addEventListener('submit',async e=>{
-  e.preventDefault();const f=g('resetForm'),re=g('resetErr');re.style.display='none';
-  if(f.pw.value.length<8)return showErr(re,'Password must be at least 8 characters.');
-  if(f.pw.value!==f.pw2.value)return showErr(re,'Passwords do not match.');
-  const b=g('resetBtn');b.disabled=true;b.textContent='Saving…';
-  try{
-    const r=await api('/api/reset-password',{token:resetToken,password:f.pw.value});
-    if(!r.ok)throw new Error(await jerr(r));
-    location.href='/dashboard';
-  }catch(x){showErr(re,x.message);b.disabled=false;b.textContent='Set new password'}
-});
-
-/* ---------- Cost of food waste calculator ---------- */
-const $=id=>document.getElementById(id),tt=n=>'TT$'+Math.round(n).toLocaleString('en-US');
-function calc(){
-  const st=+$('cStock').value,fl=+$('cFail').value,lo=+$('cLoss').value;
-  $('vStock').textContent=tt(st);$('vFail').textContent=fl;$('vLoss').textContent=lo+'%';
-  const loss=st*fl*lo/100,plan=299*12,save=loss/2,net=save-plan;
-  $('rLoss').textContent=tt(loss);$('rPlan').textContent=tt(plan);$('rSave').textContent=tt(save);
-  $('rNet').textContent=(net>=0?'+':'−')+tt(Math.abs(net));
-  $('rLoss').classList.toggle('ok',false);
-}
-['cStock','cFail','cLoss'].forEach(i=>$(i).addEventListener('input',calc));calc();
-
-/* ---------- FAQ chatbot ---------- */
-const faq={
- 'How much does it cost?':'Starter is TT$299/month (up to 5 sensors). Business is TT$599/month (up to 15 sensors, multiple locations, advanced reporting). Enterprise is custom. There is also a one-time setup and installation fee.',
- 'How does it work?':'Sensors sit inside your fridges, freezers, cold rooms or delivery containers and send readings to our cloud platform. You view everything on the dashboard and get alerts when a reading leaves your safe range.',
- 'Who installs it?':'We do. Our team handles sensor installation, account setup and troubleshooting.',
- 'What are alerts?':'You choose your safe temperature range. If a sensor goes outside it, FreshCheck alerts you automatically so you can act right away.',
- 'Can I try it?':'Yes — use the "Book a free demo" form on this page and we will show you FreshCheck in action.'
-};
-const msgs=document.getElementById('msgs'),qs=document.getElementById('qs'),chat=document.getElementById('chat');
-function add(c,t){const d=document.createElement('div');d.className=c;d.textContent=t;msgs.append(d);msgs.scrollTop=msgs.scrollHeight}
-Object.keys(faq).forEach(q=>{const b=document.createElement('button');b.textContent=q;b.onclick=()=>{add('me',q);setTimeout(()=>add('bot',faq[q]),350)};qs.append(b)});
-document.getElementById('chatBtn').onclick=()=>{chat.style.display=chat.style.display==='block'?'none':'block'};
-document.getElementById('chatX').onclick=()=>{chat.style.display='none'};
-addEventListener('keydown',e=>{if(e.key==='Escape')chat.style.display='none'});
-</script>
 </body>
+
 </html>
